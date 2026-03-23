@@ -57,7 +57,10 @@ A rota `/despesas/nova` sem contexto de grupo redireciona para `/grupos`.
 - O seed local fica em `supabase/seed.sql`
 - A configuração local do CLI fica em `supabase/config.toml`
 - Helpers de conexão ficam separados em `lib/supabase/browser.ts`, `lib/supabase/server-client.ts` e `lib/supabase/admin-client.ts`
+- As decisões de modelagem do domínio estão em `docs/schema-dominio.md`
 - O bootstrap operacional está em `docs/supabase-setup.md` e `supabase/README.md`
+- O seed atual é intencionalmente enxuto; os cenários reais vão nascer dos fluxos de auth, grupo e despesa
+- Se você já tinha um banco local anterior à H5, rode `npm run supabase:db:reset`
 - A estratégia atual é evoluir dos mocks para queries reais sem mudar a estrutura visual das páginas
 
 ## Estrutura

@@ -5,6 +5,7 @@
 - `migrations/`: schema versionado do projeto
 - `seed.sql`: seed de desenvolvimento para ambiente local
 - `config.toml`: configuração do Supabase CLI para o repositório
+- `../docs/schema-dominio.md`: decisões de modelagem que orientam H6-H16
 
 ## Convenção de migrations
 
@@ -21,6 +22,20 @@
 4. Ler as chaves locais com `npm run supabase:status`.
 5. Copiar os valores para `.env.local`.
 6. Rodar `npm run dev`.
+
+## Seed atual
+
+- o seed está propositalmente enxuto
+- a partir da H5, `profiles` precisa respeitar o contrato com `auth.users`
+- enquanto o app ainda não usa auth real, preferimos um banco vazio e previsível a
+  dados demo artificiais
+- se você tinha um banco local anterior à H5, faça `npm run supabase:db:reset`
+
+## Usuários de teste antes da H7/H8
+
+- crie o usuário em `Authentication > Users` no Supabase Studio local
+- copie o `id` gerado
+- insira o profile manualmente usando esse mesmo `id`
 
 ## Reset de ambiente
 

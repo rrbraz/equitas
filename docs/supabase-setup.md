@@ -15,6 +15,7 @@ Deixar frontend e backend reproduzíveis em desenvolvimento e previsíveis em de
 - `supabase/config.toml`: configuração local do CLI
 - `supabase/migrations/*.sql`: schema versionado
 - `supabase/seed.sql`: dados de desenvolvimento
+- `docs/schema-dominio.md`: decisões de modelagem do domínio
 - `lib/supabase/browser.ts`: cliente público do navegador
 - `lib/supabase/server-client.ts`: cliente server-side com chave pública
 - `lib/supabase/admin-client.ts`: cliente administrativo com service role
@@ -47,6 +48,32 @@ Esse comando:
 - recria o banco local
 - reaplica todas as migrations
 - reaplica `supabase/seed.sql`
+
+Observação:
+
+- o seed atual deixa o banco vazio de propósito
+- depois da H5, `profiles` precisa nascer alinhado com `auth.users`
+- os cenários reais de usuário, grupo e despesa passam a ser criados pelas próximas
+  histórias, não por fixtures artificiais
+- se você já tinha um banco local antigo com dados demo pré-H5, rode `npm run supabase:db:reset`
+  antes de seguir
+
+## Criar usuários de teste antes da H7/H8
+
+Enquanto o app ainda não cria perfil automaticamente:
+
+1. Rode `npm run supabase:start`.
+2. Abra o Supabase Studio local.
+3. Crie um usuário em `Authentication > Users`.
+4. Copie o `id` do usuário criado.
+5. Insira o profile manualmente no SQL Editor com o mesmo `id`.
+
+Exemplo:
+
+```sql
+insert into profiles (id, full_name, email)
+values ('<auth-user-id>', 'Usuário Teste', 'teste@example.com');
+```
 
 ## Criar nova migration
 

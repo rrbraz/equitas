@@ -198,16 +198,18 @@ Critérios de aceite:
 
 ### H5. Ajustar o schema inicial para o domínio real
 
+Status: concluída
+
 Objetivo: remover fragilidades antes de conectar os fluxos principais.
 
 Tarefas:
 
-- [ ] Revisar `profiles` para alinhar com `auth.users`.
-- [ ] Adicionar `updated_at` nas tabelas que serão editáveis.
-- [ ] Revisar constraints e índices principais.
-- [ ] Definir estratégia para categorias.
-- [ ] Avaliar se `group_members.role` precisa de enumeração simples.
-- [ ] Definir modelo mínimo para convite de membro.
+- [x] Revisar `profiles` para alinhar com `auth.users`.
+- [x] Adicionar `updated_at` nas tabelas que serão editáveis.
+- [x] Revisar constraints e índices principais.
+- [x] Definir estratégia para categorias.
+- [x] Avaliar se `group_members.role` precisa de enumeração simples.
+- [x] Definir modelo mínimo para convite de membro.
 
 Critérios de aceite:
 

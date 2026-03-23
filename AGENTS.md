@@ -12,13 +12,15 @@ O foco do projeto é evoluir o protótipo visual para um app real sem perder sim
 - H3 concluída: `loading`, `error` e estados vazios padronizados.
 - H3.5 concluída: fluxos mock coerentes de auth, navegação, grupos, despesas e transferência.
 - H4 concluída: stack local documentado, migrations/seed versionados e clientes Supabase separados.
-- História ativa: H5 (ajuste do schema inicial para o domínio real).
+- H5 concluída: schema ajustado para auth real, convites, auditoria mínima e settlement sem duplicidade.
+- História ativa: H6 (autorização com RLS).
 
 Consulte:
 
 - `docs/backlog-app-real.md`
 - `docs/convencoes-arquitetura.md`
 - `docs/checklist-pr.md`
+- `docs/schema-dominio.md`
 - `README.md`
 - `.env.example`
 - `.github/workflows/ci.yml`
@@ -112,9 +114,9 @@ Prática esperada neste repositório:
 
 Prioridades de curto prazo:
 
-1. H5: ajustar schema inicial para o domínio real
-2. H6: implantar autorização com RLS
-3. H7: implementar auth real
+1. H6: implantar autorização com RLS
+2. H7: implementar auth real
+3. H8: criar o perfil base do usuário
 
 Ao conectar backend real:
 
