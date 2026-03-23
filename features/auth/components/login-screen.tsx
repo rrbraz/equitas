@@ -3,18 +3,22 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, KeyRound } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
 import { ActionFeedback } from "@/components/action-feedback";
+import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type LoginScreenProps = {
   actionErrorMessage?: string;
   infoMessage?: string;
+  nextPath?: string;
 };
 
 export function LoginScreen({
   actionErrorMessage,
   infoMessage,
+  nextPath,
 }: LoginScreenProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -22,10 +26,10 @@ export function LoginScreen({
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!email.includes("@")) {
       setSubmitErrorMessage("Use um e-mail válido para entrar.");
       return;
@@ -37,10 +41,35 @@ export function LoginScreen({
     }
 
     setSubmitErrorMessage(null);
-    startTransition(() => {
-      router.push("/dashboard?journey=login");
+    const supabase = getSupabaseBrowserClient();
+
+    if (!supabase) {
+      setSubmitErrorMessage(
+        "Configure as variáveis do Supabase para usar o login real.",
+      );
+      return;
+    }
+
+    setIsPending(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
+
+    if (error) {
+      setSubmitErrorMessage(error.message);
+      setIsPending(false);
+      return;
+    }
+
+    router.replace(getSafeNextPath(nextPath));
+    router.refresh();
   }
+
+  const signUpHref = nextPath
+    ? `/cadastro?next=${encodeURIComponent(nextPath)}`
+    : "/cadastro";
 
   return (
     <div className="auth-shell">
@@ -49,8 +78,8 @@ export function LoginScreen({
         <p className="eyebrow-note">Entrar.</p>
         <h1 className="auth-headline">Entre e retome seus grupos.</h1>
         <p className="auth-subcopy">
-          Acesse dashboard, despesas e saldos com um fluxo simples enquanto o
-          backend real ainda está em transição.
+          Acesse dashboard, despesas e saldos com email e senha conectados ao
+          Supabase Auth.
         </p>
       </div>
 
@@ -58,7 +87,7 @@ export function LoginScreen({
         {infoMessage ? (
           <ActionFeedback
             tone="success"
-            title="Fluxo preparado"
+            title="Acesso disponível"
             message={infoMessage}
           />
         ) : null}
@@ -116,7 +145,7 @@ export function LoginScreen({
 
         <p className="mono-caption">
           Ainda não tem conta?{" "}
-          <Link href="/cadastro" className="inline-link">
+          <Link href={signUpHref} className="inline-link">
             Criar conta
           </Link>
         </p>

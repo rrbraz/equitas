@@ -1,10 +1,11 @@
-import { Bell, LockKeyhole, LogOut, UserRound, Wallet } from "lucide-react";
+import { Bell, LockKeyhole, UserRound, Wallet } from "lucide-react";
 import Link from "next/link";
 
 import { ActionFeedback } from "@/components/action-feedback";
 import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { LogoutButton } from "@/features/auth/components/logout-button";
 import { TopBar } from "@/components/top-bar";
 import { formatCurrency } from "@/lib/format";
 import type { ProfileScreenData } from "@/features/profile/types";
@@ -130,10 +131,7 @@ export function ProfileScreen({
           })}
         </section>
 
-        <Link href="/login?logout=1" className="logout-button">
-          <LogOut size={18} />
-          Sair
-        </Link>
+        <LogoutButton />
 
         <p className="mono-caption">Versão 0.1.0 · protótipo navegável</p>
       </main>

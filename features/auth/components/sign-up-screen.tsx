@@ -4,13 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ActionFeedback } from "@/components/action-feedback";
-import { useState, useTransition } from "react";
+import { useState } from "react";
+
+import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type SignUpScreenProps = {
   actionErrorMessage?: string;
+  nextPath?: string;
 };
 
-export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
+export function SignUpScreen({
+  actionErrorMessage,
+  nextPath,
+}: SignUpScreenProps) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,10 +25,10 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!fullName.trim()) {
       setSubmitErrorMessage("Informe seu nome completo para continuar.");
       return;
@@ -38,10 +45,53 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
     }
 
     setSubmitErrorMessage(null);
-    startTransition(() => {
-      router.push("/dashboard?scenario=new&journey=signup");
+    const supabase = getSupabaseBrowserClient();
+
+    if (!supabase) {
+      setSubmitErrorMessage(
+        "Configure as variáveis do Supabase para usar o cadastro real.",
+      );
+      return;
+    }
+
+    setIsPending(true);
+
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    callbackUrl.searchParams.set(
+      "next",
+      getSafeNextPath(nextPath, "/dashboard?scenario=new"),
+    );
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName.trim(),
+        },
+        emailRedirectTo: callbackUrl.toString(),
+      },
     });
+
+    if (error) {
+      setSubmitErrorMessage(error.message);
+      setIsPending(false);
+      return;
+    }
+
+    if (data.session) {
+      router.replace(getSafeNextPath(nextPath, "/dashboard?scenario=new"));
+      router.refresh();
+      return;
+    }
+
+    router.replace("/login?registered=1");
+    router.refresh();
   }
+
+  const loginHref = nextPath
+    ? `/login?next=${encodeURIComponent(nextPath)}`
+    : "/login";
 
   return (
     <div className="auth-shell">
@@ -116,13 +166,13 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
 
         <ActionFeedback
           tone="info"
-          title="Login social ainda não entrou"
-          message="Enquanto o auth real não chega, use email e senha mockados para validar a jornada principal."
+          title="Confirmação por e-mail pode estar ativa"
+          message="Se o projeto exigir confirmação, você recebe um link e conclui a entrada pelo callback autenticado."
         />
 
         <p className="mono-caption">
           Já tem conta?{" "}
-          <Link href="/login" className="inline-link">
+          <Link href={loginHref} className="inline-link">
             Fazer login
           </Link>
         </p>

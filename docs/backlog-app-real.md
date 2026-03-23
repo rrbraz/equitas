@@ -238,15 +238,17 @@ Critérios de aceite:
 
 ### H7. Implementar cadastro, login e logout reais
 
+Status: concluída
+
 Objetivo: substituir a entrada fake do app.
 
 Tarefas:
 
-- [ ] Conectar a página de cadastro ao Supabase Auth.
-- [ ] Criar tela ou fluxo de login.
-- [ ] Implementar logout.
-- [ ] Criar middleware ou proteção equivalente para rotas privadas.
-- [ ] Redirecionar usuário autenticado para o ponto correto.
+- [x] Conectar a página de cadastro ao Supabase Auth.
+- [x] Criar tela ou fluxo de login.
+- [x] Implementar logout.
+- [x] Criar middleware ou proteção equivalente para rotas privadas.
+- [x] Redirecionar usuário autenticado para o ponto correto.
 
 Critérios de aceite:
 

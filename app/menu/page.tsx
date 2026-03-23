@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { TopBar } from "@/components/top-bar";
+import { LogoutButton } from "@/features/auth/components/logout-button";
 import { getMockProfileScreenData } from "@/features/profile/data/mock-profile";
 
 const menuItems = [
@@ -111,10 +112,7 @@ export default async function MenuPage({
           ))}
         </section>
 
-        <Link href="/login?logout=1" className="logout-button">
-          <LogOut size={18} />
-          Sair do app
-        </Link>
+        <LogoutButton label="Sair do app" />
       </main>
 
       <BottomNav />

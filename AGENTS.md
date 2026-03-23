@@ -14,7 +14,8 @@ O foco do projeto é evoluir o protótipo visual para um app real sem perder sim
 - H4 concluída: stack local documentado, migrations/seed versionados e clientes Supabase separados.
 - H5 concluída: schema ajustado para auth real, convites, auditoria mínima e settlement sem duplicidade.
 - H6 concluída: políticas RLS implantadas para perfis, grupos, membros, despesas, convites e settlements.
-- História ativa: H7 (auth real).
+- H7 concluída: cadastro, login, logout, callback e proteção de rotas com sessão real.
+- História ativa: H8 (perfil base do usuário).
 
 Consulte:
 
@@ -116,9 +117,9 @@ Prática esperada neste repositório:
 
 Prioridades de curto prazo:
 
-1. H7: implementar auth real
-2. H8: criar o perfil base do usuário
-3. H9: criar grupos reais
+1. H8: criar o perfil base do usuário
+2. H9: criar grupos reais
+3. H10: listar grupos reais do usuário
 
 Ao conectar backend real:
 

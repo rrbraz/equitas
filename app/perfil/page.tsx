@@ -14,9 +14,9 @@ export default async function PerfilPage({
   const params = await searchParams;
   const flashMessage =
     params.updated === "1"
-      ? "Perfil mock atualizado com sucesso."
+      ? "Perfil atualizado com sucesso."
       : params.passwordUpdated === "1"
-        ? "Senha mock alterada. Use este fluxo para validar a jornada."
+        ? "Senha atualizada com sucesso."
         : params.feature === "notifications"
           ? "Notificações ainda não estão ativas. O fluxo real entra depois do auth."
           : params.feature === "payments"

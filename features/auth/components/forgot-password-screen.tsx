@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowLeft, MailCheck } from "lucide-react";
 
 import { ActionFeedback } from "@/components/action-feedback";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 export function ForgotPasswordScreen() {
   const router = useRouter();
@@ -13,8 +14,9 @@ export function ForgotPasswordScreen() {
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
+  const [isPending, setIsPending] = useState(false);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!email.includes("@")) {
       setSubmitErrorMessage(
         "Informe um e-mail válido para iniciar a recuperação.",
@@ -23,7 +25,32 @@ export function ForgotPasswordScreen() {
     }
 
     setSubmitErrorMessage(null);
-    router.push("/login?recovered=1");
+    const supabase = getSupabaseBrowserClient();
+
+    if (!supabase) {
+      setSubmitErrorMessage(
+        "Configure as variáveis do Supabase para usar a recuperação real.",
+      );
+      return;
+    }
+
+    setIsPending(true);
+
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    callbackUrl.searchParams.set("next", "/perfil/seguranca?recovery=1");
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: callbackUrl.toString(),
+    });
+
+    if (error) {
+      setSubmitErrorMessage(error.message);
+      setIsPending(false);
+      return;
+    }
+
+    router.replace("/login?recovered=1");
+    router.refresh();
   }
 
   return (
@@ -37,8 +64,7 @@ export function ForgotPasswordScreen() {
         <p className="eyebrow-note">Recuperar acesso.</p>
         <h1 className="auth-headline">Redefina o próximo passo.</h1>
         <p className="auth-subcopy">
-          Este fluxo ainda é mockado, mas precisa parecer uma jornada real do
-          produto.
+          Envie um link de recuperação para o email da sua conta.
         </p>
       </div>
 
@@ -67,9 +93,10 @@ export function ForgotPasswordScreen() {
           type="button"
           className="primary-button primary-button--full"
           onClick={handleSubmit}
+          disabled={isPending}
         >
           <MailCheck size={18} />
-          Enviar instruções
+          {isPending ? "Enviando..." : "Enviar instruções"}
         </button>
       </section>
     </div>

@@ -3,10 +3,15 @@ import { ChangePasswordScreen } from "@/features/profile/components/change-passw
 export default async function PerfilSegurancaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ scenario?: string }>;
+  searchParams: Promise<{ recovery?: string; scenario?: string }>;
 }) {
   const params = await searchParams;
   const scenario = params.scenario === "new" ? "new" : "default";
 
-  return <ChangePasswordScreen scenario={scenario} />;
+  return (
+    <ChangePasswordScreen
+      recoveryMode={params.recovery === "1"}
+      scenario={scenario}
+    />
+  );
 }

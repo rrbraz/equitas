@@ -17,6 +17,8 @@ Deixar frontend e backend reproduzíveis em desenvolvimento e previsíveis em de
 - `supabase/seed.sql`: dados de desenvolvimento
 - `docs/schema-dominio.md`: decisões de modelagem do domínio
 - `docs/rls-testes-manuais.md`: guia de validação manual das políticas
+- `proxy.ts`: refresh de sessão e proteção de rotas privadas
+- `app/auth/callback/route.ts`: conclusão de fluxos autenticados por link
 - `lib/supabase/browser.ts`: cliente público do navegador
 - `lib/supabase/server-client.ts`: cliente server-side com chave pública
 - `lib/supabase/admin-client.ts`: cliente administrativo com service role
@@ -27,6 +29,9 @@ Deixar frontend e backend reproduzíveis em desenvolvimento e previsíveis em de
 2. Rode `npm run supabase:status`.
 3. Copie URL, anon key e service role key para `.env.local`.
 4. Rode `npm run dev`.
+
+Para flows de confirmação de e-mail e recuperação de senha, garanta que o projeto
+também permita redirects para `/auth/callback`.
 
 Exemplo de variáveis esperadas:
 
