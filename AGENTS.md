@@ -9,7 +9,10 @@ O foco do projeto é evoluir o protótipo visual para um app real sem perder sim
 
 - H1 concluída: base organizada por `features/`, rotas do `app/` finas e mocks segmentados por domínio.
 - H2 concluída: lint, formatação, `typecheck`, `build`, `npm run check`, checklist de PR e CI.
-- Próxima história natural: H3 (`loading`, `error` e estados vazios).
+- H3 concluída: `loading`, `error` e estados vazios padronizados.
+- H3.5 concluída: fluxos mock coerentes de auth, navegação, grupos, despesas e transferência.
+- H4 concluída: stack local documentado, migrations/seed versionados e clientes Supabase separados.
+- História ativa: H5 (ajuste do schema inicial para o domínio real).
 
 Consulte:
 
@@ -109,9 +112,9 @@ Prática esperada neste repositório:
 
 Prioridades de curto prazo:
 
-1. H3: padrões de `loading`, `error` e estados vazios
-2. H4: consolidar ambiente Supabase
-3. H5/H6: schema real e autorização com RLS
+1. H5: ajustar schema inicial para o domínio real
+2. H6: implantar autorização com RLS
+3. H7: implementar auth real
 
 Ao conectar backend real:
 

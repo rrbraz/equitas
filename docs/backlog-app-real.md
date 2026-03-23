@@ -179,15 +179,17 @@ Critérios de aceite:
 
 ### H4. Consolidar ambiente Supabase para desenvolvimento e produção
 
+Status: concluída
+
 Objetivo: garantir que o backend possa ser usado de forma previsível.
 
 Tarefas:
 
-- [ ] Revisar `.env.example` e documentar variáveis obrigatórias.
-- [ ] Criar convenção para migrations no diretório `supabase/`.
-- [ ] Definir processo de seed de desenvolvimento.
-- [ ] Separar claramente cliente público e cliente server/admin.
-- [ ] Documentar bootstrap local e deploy.
+- [x] Revisar `.env.example` e documentar variáveis obrigatórias.
+- [x] Criar convenção para migrations no diretório `supabase/`.
+- [x] Definir processo de seed de desenvolvimento.
+- [x] Separar claramente cliente público e cliente server/admin.
+- [x] Documentar bootstrap local e deploy.
 
 Critérios de aceite:
 

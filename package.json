@@ -13,7 +13,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck && npm run format:check && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run build",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:db:reset": "supabase db reset",
+    "supabase:db:push": "supabase db push",
+    "supabase:migration:new": "supabase migration new"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",
@@ -30,6 +36,7 @@
     "eslint-config-next": "^16.2.1",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
+    "supabase": "^2.83.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1"
   }

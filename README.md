@@ -13,9 +13,9 @@ Frontend mobile-first em Next.js inspirado nas telas do Stitch do projeto `Adici
 ## Como rodar
 
 1. Instale dependências: `npm install`
-2. Copie `.env.example` para `.env.local`
-3. Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Se for usar fluxos server/admin do Supabase, preencha também `SUPABASE_SERVICE_ROLE_KEY`
+2. Se for usar Supabase local, suba o stack com `npm run supabase:start`
+3. Rode `npm run supabase:status` e copie as chaves para `.env.local`
+4. Se for apontar para um projeto remoto, copie `.env.example` para `.env.local` e preencha as variáveis manualmente
 5. Rode `npm run dev`
 
 Enquanto o backend não estiver ligado, a interface usa mocks locais segmentados por domínio em `features/*/data/mock-*.ts`.
@@ -28,6 +28,12 @@ Enquanto o backend não estiver ligado, a interface usa mocks locais segmentados
 - `npm run format:check`: verifica se a base está formatada
 - `npm run typecheck`: valida tipos com TypeScript
 - `npm run check`: comando único para validar lint, tipos, formatação e build
+- `npm run supabase:start`: sobe o stack local do Supabase
+- `npm run supabase:stop`: derruba o stack local do Supabase
+- `npm run supabase:status`: mostra URLs e chaves locais
+- `npm run supabase:db:reset`: recria banco local com migrations + seed
+- `npm run supabase:db:push`: aplica migrations no projeto remoto vinculado
+- `npm run supabase:migration:new -- <nome>`: cria uma nova migration versionada
 
 O checklist curto de PR e revisão está em `docs/checklist-pr.md`.
 Existe também um workflow em `.github/workflows/ci.yml` para rodar essa validação automaticamente em `push` para `main` e em `pull_request`.
@@ -47,8 +53,11 @@ A rota `/despesas/nova` sem contexto de grupo redireciona para `/grupos`.
 
 ## Supabase
 
-- O schema inicial está em `supabase/schema.sql`
-- Helpers de conexão estão em `lib/supabase/browser.ts` e `lib/supabase/server.ts`
+- A fonte da verdade do banco está em `supabase/migrations/`
+- O seed local fica em `supabase/seed.sql`
+- A configuração local do CLI fica em `supabase/config.toml`
+- Helpers de conexão ficam separados em `lib/supabase/browser.ts`, `lib/supabase/server-client.ts` e `lib/supabase/admin-client.ts`
+- O bootstrap operacional está em `docs/supabase-setup.md` e `supabase/README.md`
 - A estratégia atual é evoluir dos mocks para queries reais sem mudar a estrutura visual das páginas
 
 ## Estrutura
@@ -63,7 +72,8 @@ A rota `/despesas/nova` sem contexto de grupo redireciona para `/grupos`.
 
 1. Crie um projeto na Vercel apontando para este diretório.
 2. Configure as mesmas variáveis do `.env.local` em Production e Preview.
-3. Use `npm run build` como comando de build.
+3. Garanta que o schema remoto recebeu as migrations antes do deploy.
+4. Use `npm run build` como comando de build.
 
 ## Assets Stitch
 

@@ -1,13 +1,15 @@
 "use client";
 
+import "client-only";
+
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-import { getPublicSupabaseEnv, hasSupabaseEnv } from "@/lib/supabase/env";
+import { getPublicSupabaseEnv, hasPublicSupabaseEnv } from "@/lib/supabase/env";
 
 let browserClient: SupabaseClient | null = null;
 
 export function getSupabaseBrowserClient() {
-  if (!hasSupabaseEnv) {
+  if (!hasPublicSupabaseEnv) {
     return null;
   }
 
