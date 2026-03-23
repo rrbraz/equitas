@@ -1,0 +1,9 @@
+.next
+node_modules
+.env
+.env*.local
+.vscode
+dist
+coverage
+*.tsbuildinfo
+supabase/.temp

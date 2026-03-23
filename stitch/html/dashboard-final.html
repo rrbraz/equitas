@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Equitas - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1A237E",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#E8EAF6",
+                        "on-primary-container": "#1A237E",
+                        "secondary": "#2E7D32",
+                        "tertiary": "#C62828",
+                        "background": "#F5F7FB",
+                        "surface": "#ffffff",
+                        "on-surface": "#1C1B1F",
+                        "surface-variant": "#E1E2EC",
+                        "outline": "#74777F"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: { 
+                        "DEFAULT": "1rem", // Based on ROUND_EIGHT / 16px
+                        "lg": "1rem",
+                        "xl": "1.25rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px" 
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F5F7FB;
+            min-height: 100dvh;
+        }
+        .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased pb-32">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl shadow-sm shadow-indigo-900/5 flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity active:scale-95 text-indigo-900">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-jakarta font-extrabold text-2xl text-indigo-900 dark:text-indigo-100 tracking-tight">Equitas</span>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-indigo-100 shadow-sm">
+<img alt="User profile avatar" class="object-cover w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLIIH0WmpSpZtH5vBw3nCBwj13LGZvehPggDGuKv7fnoXPV9SD7IIjc_rY6PZtQtp8pO5gvzFz5R8VrJMjHuKOZ57OwK2tgWrpxI9OOaqjT4hiRrn3uUI9Ej8iPD_9IExp-9UzKn1Te3v_DaZsHVwlYd5oXycRPrASqTuoxcBoNE_yetx3XEAi1aBGLoLk9YIJqBqyENBvMPnqpsWhh4WG6r-T3xQERETgAOdnwZrGSDD0hHqd2v_Fq4zCm0YQdYhipSlCyagyKu9E"/>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 pt-24">
+<!-- Elegant Net Balance Card -->
+<section class="mb-10">
+<div class="bg-surface p-8 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col items-center">
+<p class="text-slate-500 font-jakarta text-xs font-bold uppercase tracking-[0.15em] mb-2">Net Balance</p>
+<div class="flex items-center gap-1 mb-8">
+<span class="text-3xl font-jakarta font-extrabold text-primary">$</span>
+<h2 class="text-5xl font-jakarta font-extrabold tracking-tight text-primary">1,482.50</h2>
+</div>
+<div class="w-full grid grid-cols-2 gap-4 border-t border-slate-50 pt-6">
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Owed to you</span>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-sm font-bold">arrow_upward</span>
+<span class="text-lg font-jakarta font-bold">$2,140.00</span>
+</div>
+</div>
+<div class="flex flex-col items-center border-l border-slate-50">
+<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">You owe</span>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-sm font-bold">arrow_downward</span>
+<span class="text-lg font-jakarta font-bold">$657.50</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Content Sections -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Your Groups Section -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-jakarta font-bold text-primary">Your Groups</h3>
+<button class="text-xs font-bold text-primary hover:underline uppercase tracking-wider">SEE ALL</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Group Item 1 -->
+<div class="bg-surface p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">house</span>
+</div>
+<div class="flex-1">
+<h4 class="font-jakarta font-bold text-sm text-slate-800">Brooklyn Heights Apt</h4>
+<p class="text-[11px] text-slate-400">4 members active</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">Owed</p>
+<p class="text-secondary font-jakarta font-bold">$420.00</p>
+</div>
+</div>
+<!-- Group Item 2 -->
+<div class="bg-surface p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">flight</span>
+</div>
+<div class="flex-1">
+<h4 class="font-jakarta font-bold text-sm text-slate-800">Tokyo Trip 2024</h4>
+<p class="text-[11px] text-slate-400">6 members active</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">Owe</p>
+<p class="text-tertiary font-jakarta font-bold">$128.40</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activity Section -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-jakarta font-bold text-primary">Recent Activity</h3>
+<button class="text-xs font-bold text-primary hover:underline uppercase tracking-wider">HISTORY</button>
+</div>
+<div class="space-y-3">
+<!-- Activity Item 1 -->
+<div class="bg-surface/50 p-4 rounded-xl flex items-center gap-3 border border-slate-100">
+<img alt="Julian" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzcRvvgv4oizQHTM4frrGj_qPZ5T2uVdxLpV0e9Jolyk9Bxa0J2hurdBVAxT17ivUTvhWG04G0ACxyC2mk4cZiummqtyqOar8LK38j1zWuv1px0Hl3EGBU_LPNBlJ0PaLiMwf0bbWKIVQrkJP3Geb-3yCe8p9d18yxM6UHWmN0PSOzEKPuVTyf-N4GwCleBkeu-6jleuQsyrhoCMapj8PJ2y8DZ7zwCyHZZksNwcq70HmFOT1SfGBcxzMmTmA7-CivY7d-C4Yfm5ZS"/>
+<div class="flex-1">
+<p class="text-xs text-slate-700 leading-tight">
+<span class="font-bold">Julian D.</span> added <span class="font-semibold italic">"Whole Foods"</span>
+</p>
+<span class="text-[10px] text-slate-400">2h ago</span>
+</div>
+<div class="text-right">
+<p class="text-tertiary font-jakarta font-bold text-sm">$45.12</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="bg-surface/50 p-4 rounded-xl flex items-center gap-3 border border-slate-100">
+<img alt="Sarah" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiTc0tHWn3pIpEWLKFGVymLkezmHSWqJcvdhbmtT2mRrDYM33QS_9U2-ed2SrnKfKRI5THuRvv_1MwLWq4NYC_l7JOmYulbcuSV_auvt1CGQU5PA2CoPduHUFcKTP1uhahbdfg27k__0aFZxeE_bUGYQjODs61a33dAyYh-UTLxhf8pJXfZTMfGuiPja4AB_LBriXFMNby883cDe1YeMwQbKw7nHyKA6AS1esWzvTeLnk9r0AaHk99ePV_g9ehiJg72lONtiiMZ-aC"/>
+<div class="flex-1">
+<p class="text-xs text-slate-700 leading-tight">
+<span class="font-bold">Sarah K.</span> paid you
+                        </p>
+<span class="text-[10px] text-slate-400">Yesterday</span>
+</div>
+<div class="text-right">
+<p class="text-secondary font-jakarta font-bold text-sm">+$85.00</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Action Button -->
+<button class="fixed bottom-28 right-6 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl font-bold">add</span>
+</button>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 rounded-t-3xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-[0_-8px_32px_rgba(27,27,33,0.04)] flex justify-around items-center px-4 py-3 pb-8">
+<a class="flex flex-col items-center justify-center text-indigo-900 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl px-4 py-1 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-jakarta font-bold text-[10px] mt-0.5">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-jakarta font-bold text-[10px] mt-0.5">Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-jakarta font-bold text-[10px] mt-0.5">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-jakarta font-bold text-[10px] mt-0.5">Profile</span>
+</a>
+</nav>
+</body></html>

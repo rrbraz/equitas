@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Equitas - Viagem Rio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Montserrat:wght@700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1A237E",
+                        "primary-container": "#283593",
+                        secondary: "#1B6D24",
+                        "secondary-container": "#A3F69C",
+                        surface: "#FBF8FF",
+                        "surface-container": "#F3F3F7",
+                        "on-surface": "#1B1B21",
+                        "on-surface-variant": "#454652",
+                        outline: "#767683",
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        display: ["Montserrat", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8F9FA;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-on-surface min-h-screen">
+<!-- TopAppBar (from COMPONENTS_12) -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl shadow-sm shadow-indigo-900/5 flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-indigo-900 cursor-pointer hover:opacity-80 transition-opacity active:scale-95">arrow_back</span>
+<h1 class="font-['Montserrat'] font-bold tracking-tight text-xl text-indigo-900 dark:text-indigo-400">Viagem Rio</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-indigo-100">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkDyapbU8l732O_8mcKj08yDeE8vrx6juJCgMcGjtPQtydEQw2uBdCo7zgm6m8W61X5ceY8gnus2mGxN8_DnuOoqTmzgvfhUNQ9SEeIh8QNv3GqEGA20iYEbYDDVtgry8g_3o8u3H7gGxQcBfIcgdAc-mRtAP7R-yBumJankvCg4J2dQGLn8v5B7O5egbgC0NIl7NHS69dRCLst_Xq1-ZEl8gj4w6skT3Ys1s_R-7QH9bDMRxWuauQW_36pg4CwM9COclL3NQuTzFt"/>
+</div>
+<span class="material-symbols-outlined text-slate-500 hover:opacity-80 transition-opacity cursor-pointer">settings</span>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 pt-24 pb-32">
+<!-- Hero Section: Group Balance Overview -->
+<section class="mb-10">
+<div class="bg-gradient-to-br from-[#1A237E] to-[#283593] p-8 rounded-3xl text-white relative overflow-hidden shadow-2xl shadow-indigo-900/20">
+<div class="relative z-10">
+<p class="text-indigo-200 text-xs font-bold uppercase tracking-[0.15em] mb-2 font-headline">Total Group Spend</p>
+<h2 class="text-4xl font-extrabold font-headline mb-8 tracking-tight">R$ 4.280,00</h2>
+<div class="flex items-center gap-4">
+<button class="bg-[#A3F69C] text-[#00390A] px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-black/10">
+<span class="material-symbols-outlined text-lg">payments</span>
+                            Settle Up
+                        </button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold text-sm transition-all hover:bg-white/20 active:scale-95">
+                            Add Expense
+                        </button>
+</div>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-400/10 rounded-full blur-3xl"></div>
+</div>
+</section>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Member Balances Column -->
+<div class="md:col-span-5 space-y-4">
+<h3 class="text-lg font-bold font-headline text-indigo-950 px-1">Member Balances</h3>
+<div class="bg-white/50 border border-indigo-50 rounded-3xl p-2 space-y-2">
+<!-- Member Card 1 -->
+<div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-slate-100/50">
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full ring-2 ring-indigo-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvmC8KB8asWHJJfFRePv3VeVlXAmRQudncrUl6asvYbIdLgJO6T98KH2tLJVj8zCYb8KnrTsbDZsRBwcoMyJH4OqzmClrZLgce5nspZTHR6qniGsVLyRLmtiIBDuH6slpGZCgxDH8XpAZZqvcACZGNwgaEo5WgBmUZd1a0TGHk8GFfWaxk5mGpuBYErFQj2cdRJ0zlnsHwItdbBIMLhCaPM4LUNDdfUmMgEkTAf2eTrbWYyT7Khmd9-gBIXncQtCUWJPh1k_f2nL66"/>
+<div>
+<p class="font-bold text-sm text-indigo-950">You</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">4 expenses paid</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase text-green-700 tracking-wider">You are owed</p>
+<p class="text-green-700 font-bold font-headline">R$ 840,00</p>
+</div>
+</div>
+<!-- Member Card 2 -->
+<div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-slate-100/50">
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full ring-2 ring-indigo-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6X5AUvqglEDC_8LhzdEUVrIGQw1aEOJPihJ1-RvOyb25CbXYpgnVKtqL608NdbK3QMrhiWtTVdomPtsOtyE14F_yzGEiQuwdnFYr1eK8GZXkeI6HJC9XuaFpFf1u2bvz3MP3uUE3h9_YTdApQpT6M665u1HbEy60uYEJ8WtwF5aUkgtO30cN6JVBQ0c0507uOaeOmJGxhf7Q_ZfXynGGAM-0nLHlaM3RziIrqjXmiuxZKPuWsNfGvH3V7ZGyHbBLmPHn3fuGDMw_m"/>
+<div>
+<p class="font-bold text-sm text-indigo-950">Beatriz</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">2 expenses paid</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase text-red-700 tracking-wider">Owes you</p>
+<p class="text-red-700 font-bold font-headline">R$ 320,00</p>
+</div>
+</div>
+<!-- Member Card 3 -->
+<div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-slate-100/50">
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full ring-2 ring-indigo-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNLTN8g_9RF82zyrtRQO9ZK8Lw4VF5ZwVjQBjc9ynWdPNGFlIpUz_TeqawVfgxRz_e_azNsTCZ7GxQzuZNmKN66i47-jcW5W71qe9XU-Pkajw7NNvEWhwZydtfJaQMZMQCHW2Ibd-aHTIgmakGK5lE6sV67QBVbx3lOO4b_ro_rvM0fSpaUPtoGuBHj0l0Ccb5iYmnkfe6BH-Pa5pGdzcl8zz1F5_7MpfFD-bYCHJXxVVsvVJ-oCg9TnZUwvFcCNX8DLJ0NO0ElUDS"/>
+<div>
+<p class="font-bold text-sm text-indigo-950">Ricardo</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">Settled up</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">No balance</p>
+<p class="text-slate-400 font-bold font-headline">R$ 0,00</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Expense History Column -->
+<div class="md:col-span-7 space-y-4">
+<div class="flex justify-between items-center px-1">
+<h3 class="text-lg font-bold font-headline text-indigo-950">Recent Expenses</h3>
+<span class="text-indigo-600 font-bold text-xs uppercase tracking-widest cursor-pointer hover:text-indigo-800 transition-colors">View All</span>
+</div>
+<div class="space-y-3">
+<!-- Transaction Item 1 -->
+<div class="bg-white p-5 rounded-3xl flex items-center gap-4 transition-all hover:shadow-md border border-indigo-50/50 group">
+<div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-900 group-hover:bg-indigo-100 transition-colors">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-indigo-950">Jantar no Copacabana</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">Paid by Beatriz • Oct 12</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-indigo-950 font-headline">R$ 450,00</p>
+<p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Your share: R$ 150,00</p>
+</div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="bg-white p-5 rounded-3xl flex items-center gap-4 transition-all hover:shadow-md border border-indigo-50/50 group">
+<div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-800 group-hover:bg-green-100 transition-colors">
+<span class="material-symbols-outlined">hotel</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-indigo-950">Hospedagem Airbnb</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">Paid by You • Oct 10</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-indigo-950 font-headline">R$ 2.800,00</p>
+<p class="text-[9px] text-green-600 uppercase font-bold tracking-wider">Rec. R$ 1.866,00</p>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="bg-white p-5 rounded-3xl flex items-center gap-4 transition-all hover:shadow-md border border-indigo-50/50 group">
+<div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-800 group-hover:bg-orange-100 transition-colors">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<div class="flex-grow">
+<p class="font-bold text-indigo-950">Uber Aeroporto</p>
+<p class="text-[11px] text-slate-500 font-medium font-body">Paid by Ricardo • Oct 09</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-indigo-950 font-headline">R$ 120,00</p>
+<p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Your share: R$ 40,00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (from COMPONENTS_12) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-3xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-[0_-8px_32px_rgba(27,27,33,0.04)] flex justify-around items-center px-4 py-3 pb-safe">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Inter'] font-medium text-[10px] mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-indigo-900 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl px-4 py-1 transition-all duration-300 ease-out cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Inter'] font-medium text-[10px] mt-1">Groups</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out cursor-pointer">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-['Inter'] font-medium text-[10px] mt-1">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-300 ease-out cursor-pointer">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] font-medium text-[10px] mt-1">Profile</span>
+</div>
+</nav>
+</body></html>

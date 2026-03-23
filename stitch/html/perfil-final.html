@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&amp;family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1A237E",
+              "on-primary": "#ffffff",
+              "primary-container": "#e0e0ff",
+              "on-primary-container": "#000666",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "secondary-container": "#a0f399",
+              "on-secondary-container": "#002204",
+              "tertiary": "#93000a",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#ffdad6",
+              "on-tertiary-container": "#410007",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-error-container": "#410002",
+              "background": "#fbf8ff",
+              "on-background": "#1b1b21",
+              "surface": "#fbf8ff",
+              "on-surface": "#1b1b21",
+              "surface-variant": "#e4e1ea",
+              "on-surface-variant": "#454652",
+              "outline": "#767683",
+              "outline-variant": "#c6c5d4",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f5f2fb",
+              "surface-container": "#efecf5",
+              "surface-container-high": "#eae7ef",
+              "surface-container-highest": "#e4e1ea",
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "Montserrat", "sans-serif"],
+              "body": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+              "label": ["Plus Jakarta Sans", "Inter", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "0.75rem",
+              "xl": "1rem",
+              "2xl": "1.5rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-nav { backdrop-filter: blur(24px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar (shared component) -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-sm shadow-indigo-900/5 flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity cursor-pointer" data-icon="menu">menu</span>
+<h1 class="font-headline font-black text-2xl text-primary">Equitas</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container border-2 border-primary/10 hover:opacity-80 transition-opacity cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwIv_cCgZJjXaA4_pj4f7Qv6mOugbW3o9Jju4tpbyzaGKnDz0kEGPcaNmGU1fwwDsdjfkVY-AS9YsOi-_dpbK6BtcBaaEDL2iYaHOcGQ_QsfwpmKMuvIMtXkyZ7texAmQL03x91sKjIqEWACkzHvui7JVasvjgcfIh7G8DE9qSCRYRHuwkfJMjv85VXJp9J0I6WzVBk2QpDthbnzHJoBOpQH9VzLsFi2MFytPJJYXRNtgfS7mL_15UdAOvm01mKzIk5XiX3vGWYZzZ"/>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto">
+<!-- Profile Hero Section -->
+<section class="flex flex-col items-center text-center mb-12">
+<div class="relative mb-6">
+<div class="w-40 h-40 rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 rotate-1 transform">
+<img alt="Professional portrait" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhyJ0nONRJ32aOpVdrVjqBDyUVs8bxkuR-2jfH5oC8ao_wZVhlgkR9_a6A8Olphd35Gg7vevAPSQ1MvpRX9GImSsmh81oA95RzclpLDhLrLx4HL1YOdyNpEepA6NnW9xYaLq6J07IAZr-YtiGhWrI8GhqQehd7F0haP8-F6XsNdojOHU8wQovq40IaNduDlkeg7WjJn0DH9fLAYOLFem5h1gjj7xYUWMxlj8Vw0VvJiF_P-YZ1tZjWz_Xe7xdfGipb_tJQfxN0s8RJ"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-secondary text-on-secondary px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase shadow-md">PRO</div>
+</div>
+<h2 class="font-headline font-extrabold text-4xl text-primary tracking-tight mb-2">Julian Vance</h2>
+<p class="font-body text-on-surface-variant text-sm mb-6 font-medium">Equitas Member since Oct 2023</p>
+<button class="bg-primary text-on-primary px-10 py-3.5 rounded-xl font-body font-bold text-sm hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-primary/25">
+                Edit Profile
+            </button>
+</section>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-2 gap-4 mb-12">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border-l-4 border-secondary">
+<span class="text-[10px] font-body font-bold text-on-surface-variant uppercase tracking-widest">Owed to you</span>
+<p class="font-headline font-extrabold text-2xl text-secondary mt-1">$1,240.50</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border-l-4 border-tertiary">
+<span class="text-[10px] font-body font-bold text-on-surface-variant uppercase tracking-widest">You owe</span>
+<p class="font-headline font-extrabold text-2xl text-tertiary mt-1">$312.00</p>
+</div>
+</div>
+<!-- Settings Categories -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-[11px] uppercase tracking-[0.2em] text-on-surface-variant/70 mb-6 ml-1">Settings &amp; Preferences</h3>
+<!-- Category: Account -->
+<div class="group cursor-pointer bg-surface-container-low hover:bg-surface-container-high transition-all p-4 rounded-xl flex items-center justify-between border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+</div>
+<div>
+<p class="font-body font-bold text-on-surface text-sm">Account</p>
+<p class="font-body text-on-surface-variant text-[11px] font-medium">Manage your personal identity</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Category: Notifications -->
+<div class="group cursor-pointer bg-surface-container-low hover:bg-surface-container-high transition-all p-4 rounded-xl flex items-center justify-between border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</div>
+<div>
+<p class="font-body font-bold text-on-surface text-sm">Notifications</p>
+<p class="font-body text-on-surface-variant text-[11px] font-medium">Push alerts &amp; weekly summaries</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Category: Payments -->
+<div class="group cursor-pointer bg-surface-container-low hover:bg-surface-container-high transition-all p-4 rounded-xl flex items-center justify-between border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="font-body font-bold text-on-surface text-sm">Payments</p>
+<p class="font-body text-on-surface-variant text-[11px] font-medium">Payment methods &amp; bank links</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Category: Security -->
+<div class="group cursor-pointer bg-surface-container-low hover:bg-surface-container-high transition-all p-4 rounded-xl flex items-center justify-between border border-transparent hover:border-primary/10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+</div>
+<div>
+<p class="font-body font-bold text-on-surface text-sm">Security</p>
+<p class="font-body text-on-surface-variant text-[11px] font-medium">Password, Biometrics &amp; 2FA</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Log Out Button -->
+<div class="pt-12 pb-8">
+<button class="w-full flex items-center justify-center gap-2 bg-tertiary-container text-on-tertiary-container py-4 rounded-xl font-body font-extrabold text-sm transition-all hover:bg-red-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+                    Log Out
+                </button>
+<p class="text-center mt-6 text-[10px] text-outline uppercase tracking-widest font-bold">Equitas v2.4.1 (Stable Build)</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (shared component) -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/70 backdrop-blur-xl rounded-t-3xl shadow-[0_-8px_32px_rgba(27,27,33,0.04)] flex justify-around items-center px-4 py-3 pb-safe">
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-primary transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label font-medium text-[10px] mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-primary transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label font-medium text-[10px] mt-1">Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-primary transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="insert_chart">insert_chart</span>
+<span class="font-label font-medium text-[10px] mt-1">Reports</span>
+</a>
+<!-- Active Tab: Profile -->
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-4 py-1 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label font-bold text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
