@@ -13,8 +13,9 @@ import {
   ReceiptText,
   Settings2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { BottomNav } from "@/components/bottom-nav";
 import { TopBar } from "@/components/top-bar";
 import { formatCurrency } from "@/lib/format";
@@ -23,17 +24,27 @@ const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0"];
 
 type ExpenseComposerProps = {
   groupSlug: string;
+  actionErrorMessage?: string;
 };
 
-export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
+export function ExpenseComposer({
+  groupSlug,
+  actionErrorMessage,
+}: ExpenseComposerProps) {
   const router = useRouter();
   const [amount, setAmount] = useState("124.50");
   const [description, setDescription] = useState("Jantar no Blue Lagoon");
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
+    null,
+  );
+  const [isPending, startTransition] = useTransition();
   const groupHref = `/grupos/${groupSlug}`;
 
   const numericAmount = Number(amount || 0);
+  const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
 
   function appendValue(value: string) {
+    setSubmitErrorMessage(null);
     setAmount((current) => {
       if (value === "." && current.includes(".")) {
         return current;
@@ -48,12 +59,30 @@ export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
   }
 
   function eraseValue() {
+    setSubmitErrorMessage(null);
     setAmount((current) => {
       if (current.length <= 1) {
         return "0";
       }
 
       return current.slice(0, -1);
+    });
+  }
+
+  function handleSubmit() {
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      setSubmitErrorMessage("Informe um valor válido maior que zero.");
+      return;
+    }
+
+    if (!description.trim()) {
+      setSubmitErrorMessage("Descreva a despesa antes de confirmar o split.");
+      return;
+    }
+
+    setSubmitErrorMessage(null);
+    startTransition(() => {
+      router.push(groupHref);
     });
   }
 
@@ -68,8 +97,13 @@ export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
         }
         trailing={
           <div className="top-bar__action-group">
-            <button className="ghost-link" type="button">
-              Salvar
+            <button
+              className="ghost-link"
+              type="button"
+              onClick={handleSubmit}
+              disabled={isPending}
+            >
+              {isPending ? "Salvando..." : "Salvar"}
             </button>
             <button className="icon-button" type="button" aria-label="Ajustes">
               <Settings2 size={18} />
@@ -79,6 +113,13 @@ export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
       />
 
       <main className="page-content">
+        {feedbackMessage ? (
+          <ActionFeedback
+            title="Não foi possível salvar a despesa"
+            message={feedbackMessage}
+          />
+        ) : null}
+
         <section className="expense-amount">
           <span className="section-label">Digite o valor</span>
           <div className="expense-amount__value">
@@ -94,7 +135,10 @@ export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
             </span>
             <input
               value={description}
-              onChange={(event) => setDescription(event.target.value)}
+              onChange={(event) => {
+                setDescription(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
               placeholder="No que você gastou?"
             />
           </label>
@@ -193,9 +237,12 @@ export function ExpenseComposer({ groupSlug }: ExpenseComposerProps) {
           <button
             className="primary-button primary-button--full"
             type="button"
-            onClick={() => router.push(groupHref)}
+            onClick={handleSubmit}
+            disabled={isPending}
           >
-            Confirmar split - {formatCurrency(numericAmount)}
+            {isPending
+              ? "Salvando despesa..."
+              : `Confirmar split - ${formatCurrency(numericAmount)}`}
           </button>
         </section>
       </main>

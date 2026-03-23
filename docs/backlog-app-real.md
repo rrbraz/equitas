@@ -50,10 +50,10 @@ Objetivo: evitar UI quebrada ou silenciosa ao trocar mocks por backend real.
 
 Tarefas:
 
-- [ ] Criar padrões de loading para páginas e blocos críticos.
-- [ ] Criar padrões de empty state para grupos, despesas e relatórios.
-- [ ] Criar padrão de mensagem de erro para ações do usuário.
-- [ ] Adicionar `error.tsx` e `loading.tsx` onde fizer sentido no App Router.
+- [x] Criar padrões de loading para páginas e blocos críticos.
+- [x] Criar padrões de empty state para grupos, despesas e relatórios.
+- [x] Criar padrão de mensagem de erro para ações do usuário.
+- [x] Adicionar `error.tsx` e `loading.tsx` onde fizer sentido no App Router.
 
 Critérios de aceite:
 

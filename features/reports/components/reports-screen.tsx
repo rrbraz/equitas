@@ -2,6 +2,7 @@ import { Menu } from "lucide-react";
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { EmptyState } from "@/components/empty-state";
 import { ReportBars } from "@/features/reports/components/report-bars";
 import { TopBar } from "@/components/top-bar";
 import { formatCurrency } from "@/lib/format";
@@ -13,6 +14,9 @@ export function ReportsScreen({
   monthlyBalances,
   reportCategories,
 }: ReportsScreenData) {
+  const hasReportData =
+    monthlyBalances.length > 0 || reportCategories.length > 0;
+
   return (
     <div className="screen-shell">
       <TopBar
@@ -66,41 +70,57 @@ export function ReportsScreen({
               </strong>
             </div>
           </div>
-          <ReportBars items={monthlyBalances} />
+          {monthlyBalances.length > 0 ? (
+            <ReportBars items={monthlyBalances} />
+          ) : (
+            <div className="report-card__empty">
+              <EmptyState
+                eyebrow="Relatório em preparação"
+                title="Ainda não há histórico suficiente"
+                description="Assim que os grupos começarem a registrar despesas reais, esta área passa a mostrar ritmo, concentração e saúde de settlement."
+                actionHref="/grupos"
+                actionLabel="Ver grupos"
+              />
+            </div>
+          )}
         </section>
 
-        <section className="stack-column">
-          <div className="section-heading">
-            <h2>By category</h2>
-            <span className="ghost-link">Monthly</span>
-          </div>
-          {reportCategories.map((category) => (
-            <article key={category.name} className="report-card stack-column">
-              <div className="section-heading">
-                <div>
-                  <h2>{category.name}</h2>
-                  <p className="list-card__meta">{category.note}</p>
+        {reportCategories.length > 0 ? (
+          <section className="stack-column">
+            <div className="section-heading">
+              <h2>By category</h2>
+              <span className="ghost-link">Monthly</span>
+            </div>
+            {reportCategories.map((category) => (
+              <article key={category.name} className="report-card stack-column">
+                <div className="section-heading">
+                  <div>
+                    <h2>{category.name}</h2>
+                    <p className="list-card__meta">{category.note}</p>
+                  </div>
+                  <strong>{category.share}%</strong>
                 </div>
-                <strong>{category.share}%</strong>
-              </div>
-              <div className="progress">
-                <div
-                  className={`progress__fill progress__fill--${category.tone}`}
-                  style={{ width: `${category.share}%` }}
-                />
-              </div>
-            </article>
-          ))}
-        </section>
+                <div className="progress">
+                  <div
+                    className={`progress__fill progress__fill--${category.tone}`}
+                    style={{ width: `${category.share}%` }}
+                  />
+                </div>
+              </article>
+            ))}
+          </section>
+        ) : null}
 
-        <section className="report-card stack-column">
-          <span className="section-label">Settlement health</span>
-          <h2>8.4</h2>
-          <p className="supporting-copy">
-            Seu sistema está estável. A maioria dos grupos liquida rápido e
-            apenas um grupo exige atenção no curto prazo.
-          </p>
-        </section>
+        {hasReportData ? (
+          <section className="report-card stack-column">
+            <span className="section-label">Settlement health</span>
+            <h2>8.4</h2>
+            <p className="supporting-copy">
+              Seu sistema está estável. A maioria dos grupos liquida rápido e
+              apenas um grupo exige atenção no curto prazo.
+            </p>
+          </section>
+        ) : null}
       </main>
 
       <BottomNav />

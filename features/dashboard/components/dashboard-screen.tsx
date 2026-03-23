@@ -11,6 +11,7 @@ import {
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { EmptyState } from "@/components/empty-state";
 import { FloatingAction } from "@/components/floating-action";
 import { TopBar } from "@/components/top-bar";
 import type { DashboardScreenData } from "@/features/dashboard/types";
@@ -78,39 +79,51 @@ export function DashboardScreen({
               See all
             </Link>
           </div>
-          <div className="list-stack">
-            {groupPreviews.map((group) => {
-              const GroupIcon = groupIcons[group.icon];
+          {groupPreviews.length > 0 ? (
+            <div className="list-stack">
+              {groupPreviews.map((group) => {
+                const GroupIcon = groupIcons[group.icon];
 
-              return (
-                <Link
-                  key={group.id}
-                  href={`/grupos/${group.slug}`}
-                  className="list-card"
-                >
-                  <div className="inline-card__avatar inline-card__avatar--soft">
-                    <GroupIcon size={18} />
-                  </div>
-                  <div className="list-card__copy">
-                    <div className="list-card__title">{group.name}</div>
-                    <p className="list-card__meta">
-                      {group.memberCount} membros ativos
-                    </p>
-                  </div>
-                  <div className="list-card__value">
-                    <span>{group.balance >= 0 ? "Owed" : "Owe"}</span>
-                    <strong
-                      className={
-                        group.balance >= 0 ? "money-positive" : "money-negative"
-                      }
-                    >
-                      {formatCurrency(Math.abs(group.balance))}
-                    </strong>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                return (
+                  <Link
+                    key={group.id}
+                    href={`/grupos/${group.slug}`}
+                    className="list-card"
+                  >
+                    <div className="inline-card__avatar inline-card__avatar--soft">
+                      <GroupIcon size={18} />
+                    </div>
+                    <div className="list-card__copy">
+                      <div className="list-card__title">{group.name}</div>
+                      <p className="list-card__meta">
+                        {group.memberCount} membros ativos
+                      </p>
+                    </div>
+                    <div className="list-card__value">
+                      <span>{group.balance >= 0 ? "Owed" : "Owe"}</span>
+                      <strong
+                        className={
+                          group.balance >= 0
+                            ? "money-positive"
+                            : "money-negative"
+                        }
+                      >
+                        {formatCurrency(Math.abs(group.balance))}
+                      </strong>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              eyebrow="Sem grupos ativos"
+              title="Seu dashboard ainda está em branco"
+              description="Crie o primeiro grupo para começar a ver saldos, atalhos e contexto financeiro por aqui."
+              actionHref="/grupos/criar"
+              actionLabel="Criar primeiro grupo"
+            />
+          )}
         </section>
 
         <section className="stack-column">
@@ -120,32 +133,44 @@ export function DashboardScreen({
               History
             </Link>
           </div>
-          <div className="list-stack">
-            {recentActivities.map((activity) => (
-              <article key={activity.id} className="list-card">
-                <Avatar
-                  name={activity.person}
-                  initials={activity.initials}
-                  tone={activity.tone}
-                  size="sm"
-                />
-                <div className="list-card__copy">
-                  <div className="list-card__title">{activity.person}</div>
-                  <p className="list-card__meta">{activity.action}</p>
-                  <p className="list-card__meta">{activity.createdAt}</p>
-                </div>
-                <div className="list-card__value">
-                  <strong
-                    className={
-                      activity.amount >= 0 ? "money-positive" : "money-negative"
-                    }
-                  >
-                    {formatSignedCurrency(activity.amount)}
-                  </strong>
-                </div>
-              </article>
-            ))}
-          </div>
+          {recentActivities.length > 0 ? (
+            <div className="list-stack">
+              {recentActivities.map((activity) => (
+                <article key={activity.id} className="list-card">
+                  <Avatar
+                    name={activity.person}
+                    initials={activity.initials}
+                    tone={activity.tone}
+                    size="sm"
+                  />
+                  <div className="list-card__copy">
+                    <div className="list-card__title">{activity.person}</div>
+                    <p className="list-card__meta">{activity.action}</p>
+                    <p className="list-card__meta">{activity.createdAt}</p>
+                  </div>
+                  <div className="list-card__value">
+                    <strong
+                      className={
+                        activity.amount >= 0
+                          ? "money-positive"
+                          : "money-negative"
+                      }
+                    >
+                      {formatSignedCurrency(activity.amount)}
+                    </strong>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              eyebrow="Sem atividade recente"
+              title="As movimentações aparecem aqui"
+              description="Quando alguém criar grupos, lançar despesas ou liquidar valores, o histórico recente passa a alimentar este bloco."
+              actionHref="/grupos"
+              actionLabel="Explorar grupos"
+            />
+          )}
         </section>
 
         <section className="report-card">

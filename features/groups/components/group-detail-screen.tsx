@@ -3,6 +3,7 @@ import { ArrowLeft, BanknoteArrowUp, Plus, Settings2 } from "lucide-react";
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { EmptyState } from "@/components/empty-state";
 import { TopBar } from "@/components/top-bar";
 import type { Group } from "@/features/groups/types";
 import { formatCurrency } from "@/lib/format";
@@ -103,24 +104,34 @@ export function GroupDetailScreen({ viewer, group }: GroupDetailScreenProps) {
               View all
             </Link>
           </div>
-          <div className="list-stack">
-            {group.expenses.map((expense) => (
-              <article key={expense.id} className="list-card">
-                <div className="inline-card__avatar inline-card__avatar--soft">
-                  {expense.category.slice(0, 1)}
-                </div>
-                <div className="list-card__copy">
-                  <div className="list-card__title">{expense.title}</div>
-                  <p className="list-card__meta">
-                    Pago por {expense.paidBy} · {expense.splitPreview}
-                  </p>
-                </div>
-                <div className="list-card__value">
-                  <strong>{formatCurrency(expense.amount)}</strong>
-                </div>
-              </article>
-            ))}
-          </div>
+          {group.expenses.length > 0 ? (
+            <div className="list-stack">
+              {group.expenses.map((expense) => (
+                <article key={expense.id} className="list-card">
+                  <div className="inline-card__avatar inline-card__avatar--soft">
+                    {expense.category.slice(0, 1)}
+                  </div>
+                  <div className="list-card__copy">
+                    <div className="list-card__title">{expense.title}</div>
+                    <p className="list-card__meta">
+                      Pago por {expense.paidBy} · {expense.splitPreview}
+                    </p>
+                  </div>
+                  <div className="list-card__value">
+                    <strong>{formatCurrency(expense.amount)}</strong>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              eyebrow="Sem despesas ainda"
+              title="Este grupo ainda não começou a dividir gastos"
+              description="Adicione a primeira despesa para abrir a timeline e começar a acompanhar os saldos dos participantes."
+              actionHref={`/grupos/${group.slug}/despesas/nova`}
+              actionLabel="Adicionar despesa"
+            />
+          )}
         </section>
       </main>
 

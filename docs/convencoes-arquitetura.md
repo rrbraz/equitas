@@ -36,6 +36,9 @@ Manter o projeto simples, legível e fácil de expandir sem concentrar regra de 
 - Regra de negócio não entra em `components/` compartilhados.
 - Helpers específicos de domínio ficam em `features/<domínio>/lib`.
 - Helpers genéricos ficam em `lib/`.
+- Estado vazio é tratado como estado normal da UI, não como exceção.
+- Mensagens de erro de ação ficam perto do formulário ou CTA que disparou a tentativa.
+- `loading.tsx` e `error.tsx` devem ser adicionados por segmento quando o fluxo justificar fallback próprio.
 
 ## Convenções De Nome
 

@@ -1,7 +1,48 @@
-import Link from "next/link";
-import { Apple, ArrowRight, Chrome } from "lucide-react";
+"use client";
 
-export function SignUpScreen() {
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Apple, ArrowRight, Chrome } from "lucide-react";
+import { ActionFeedback } from "@/components/action-feedback";
+import { useState, useTransition } from "react";
+
+type SignUpScreenProps = {
+  actionErrorMessage?: string;
+};
+
+export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
+  const router = useRouter();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
+    null,
+  );
+  const [isPending, startTransition] = useTransition();
+  const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
+
+  function handleSubmit() {
+    if (!fullName.trim()) {
+      setSubmitErrorMessage("Informe seu nome completo para continuar.");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setSubmitErrorMessage("Use um e-mail válido para criar sua conta.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setSubmitErrorMessage("A senha precisa ter pelo menos 8 caracteres.");
+      return;
+    }
+
+    setSubmitErrorMessage(null);
+    startTransition(() => {
+      router.push("/dashboard");
+    });
+  }
+
   return (
     <div className="auth-shell">
       <div className="auth-header">
@@ -17,10 +58,25 @@ export function SignUpScreen() {
       </div>
 
       <section className="auth-panel">
+        {feedbackMessage ? (
+          <ActionFeedback
+            title="Não foi possível criar sua conta"
+            message={feedbackMessage}
+          />
+        ) : null}
+
         <div className="form-stack">
           <label>
             <span className="field-label">Nome completo</span>
-            <input className="input-plain" placeholder="Ex.: Julian Smith" />
+            <input
+              className="input-plain"
+              placeholder="Ex.: Julian Smith"
+              value={fullName}
+              onChange={(event) => {
+                setFullName(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
+            />
           </label>
           <label>
             <span className="field-label">Email</span>
@@ -28,6 +84,11 @@ export function SignUpScreen() {
               className="input-plain"
               placeholder="name@example.com"
               type="email"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
             />
           </label>
           <label>
@@ -36,14 +97,24 @@ export function SignUpScreen() {
               className="input-plain"
               placeholder="Min. 8 caracteres"
               type="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
             />
           </label>
         </div>
 
-        <Link href="/dashboard" className="primary-button primary-button--full">
-          Criar conta
+        <button
+          type="button"
+          className="primary-button primary-button--full"
+          onClick={handleSubmit}
+          disabled={isPending}
+        >
+          {isPending ? "Criando conta..." : "Criar conta"}
           <ArrowRight size={18} />
-        </Link>
+        </button>
 
         <div className="center-divider">ou continue com</div>
 

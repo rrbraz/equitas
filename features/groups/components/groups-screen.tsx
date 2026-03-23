@@ -3,6 +3,7 @@ import { Menu, Plus, Wallet } from "lucide-react";
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { EmptyState } from "@/components/empty-state";
 import { FloatingAction } from "@/components/floating-action";
 import { TopBar } from "@/components/top-bar";
 import { getGroupsTotalBalance } from "@/features/groups/lib/get-groups-total-balance";
@@ -56,7 +57,13 @@ export function GroupsScreen({
           <span className="section-label">Net group balance</span>
           <h2 className="hero-amount">{formatCurrency(totalBalance)}</h2>
           <div className="stats-row">
-            <span className="stat-chip stat-chip--positive">+4.2%</span>
+            <span
+              className={`stat-chip ${
+                groups.length > 0 ? "stat-chip--positive" : ""
+              }`}
+            >
+              {groups.length > 0 ? "+4.2%" : "Sem historico"}
+            </span>
             <span className="stat-chip">{groups.length} grupos</span>
           </div>
         </section>
@@ -68,38 +75,48 @@ export function GroupsScreen({
               Criar novo
             </Link>
           </div>
-          <div className="list-stack">
-            {groups.map((group) => (
-              <Link
-                key={group.id}
-                href={`/grupos/${group.slug}`}
-                className="list-card"
-              >
-                <Avatar
-                  name={group.name}
-                  initials={group.name.slice(0, 2).toUpperCase()}
-                  tone={group.tone}
-                  size="sm"
-                />
-                <div className="list-card__copy">
-                  <div className="list-card__title">{group.name}</div>
-                  <p className="list-card__meta">
-                    {group.memberCount} membros · {group.category}
-                  </p>
-                </div>
-                <div className="list-card__value">
-                  <span>{group.balance >= 0 ? "Open" : "Pending"}</span>
-                  <strong
-                    className={
-                      group.balance >= 0 ? "money-positive" : "money-negative"
-                    }
-                  >
-                    {formatCurrency(group.balance)}
-                  </strong>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {groups.length > 0 ? (
+            <div className="list-stack">
+              {groups.map((group) => (
+                <Link
+                  key={group.id}
+                  href={`/grupos/${group.slug}`}
+                  className="list-card"
+                >
+                  <Avatar
+                    name={group.name}
+                    initials={group.name.slice(0, 2).toUpperCase()}
+                    tone={group.tone}
+                    size="sm"
+                  />
+                  <div className="list-card__copy">
+                    <div className="list-card__title">{group.name}</div>
+                    <p className="list-card__meta">
+                      {group.memberCount} membros · {group.category}
+                    </p>
+                  </div>
+                  <div className="list-card__value">
+                    <span>{group.balance >= 0 ? "Open" : "Pending"}</span>
+                    <strong
+                      className={
+                        group.balance >= 0 ? "money-positive" : "money-negative"
+                      }
+                    >
+                      {formatCurrency(group.balance)}
+                    </strong>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              eyebrow="Nenhum grupo ainda"
+              title="Crie seu primeiro círculo"
+              description="Quando seus grupos existirem, esta lista vira a entrada principal para saldos, membros e despesas."
+              actionHref="/grupos/criar"
+              actionLabel="Criar grupo"
+            />
+          )}
         </section>
 
         <section className="stack-column">
