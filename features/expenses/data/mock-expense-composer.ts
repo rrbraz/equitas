@@ -8,6 +8,6 @@ export function getMockExpenseComposerData(groupSlug: string) {
   }
 
   return {
-    groupSlug: group.slug,
+    group,
   };
 }

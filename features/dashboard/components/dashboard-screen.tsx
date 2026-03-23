@@ -7,7 +7,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { ActionFeedback } from "@/components/action-feedback";
 import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
@@ -32,8 +31,6 @@ export function DashboardScreen({
   expenseLabel,
   createdGroupSlug,
   createdGroupQuery,
-  flashMessage,
-  flashTone,
 }: DashboardScreenData) {
   const isOnboardingState =
     totals.netBalance === 0 &&
@@ -75,14 +72,6 @@ export function DashboardScreen({
       />
 
       <main className="page-content">
-        {flashMessage ? (
-          <ActionFeedback
-            tone={flashTone ?? "success"}
-            title="Jornada atualizada"
-            message={flashMessage}
-          />
-        ) : null}
-
         <section className="hero-card hero-card--light">
           <span className="section-label">Saldo líquido</span>
           <h1 className="hero-amount">{formatCurrency(totals.netBalance)}</h1>

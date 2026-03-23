@@ -62,6 +62,8 @@ Critérios de aceite:
 
 ### H3.5. Fechar lacunas de interface e navegação antes do backend real
 
+Status: concluída
+
 Objetivo: remover interações cenográficas ou quebradas antes de conectar fluxos reais.
 
 Escopo desta etapa:

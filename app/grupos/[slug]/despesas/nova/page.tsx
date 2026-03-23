@@ -33,6 +33,12 @@ export default async function NovaDespesaDoGrupoPage({
     notFound();
   }
 
+  const group = screenData?.group ?? createdGroupData?.group;
+
+  if (!group) {
+    notFound();
+  }
+
   const groupQuery = new URLSearchParams();
   if (query.created === "1") {
     groupQuery.set("created", "1");
@@ -49,7 +55,7 @@ export default async function NovaDespesaDoGrupoPage({
 
   return (
     <ExpenseComposer
-      groupSlug={slug}
+      group={group}
       groupQuery={groupQuery.toString() || undefined}
     />
   );

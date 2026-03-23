@@ -7,7 +7,6 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{
     scenario?: string;
-    journey?: string;
     created?: string;
     name?: string;
     category?: string;
@@ -16,10 +15,6 @@ export default async function DashboardPage({
 }) {
   const params = await searchParams;
   const scenario = params.scenario === "new" ? "new" : "default";
-  const journey =
-    params.journey === "signup" || params.journey === "login"
-      ? params.journey
-      : undefined;
   const createdGroup =
     params.created === "1"
       ? getMockCreatedGroupDetailScreenData({
@@ -46,12 +41,7 @@ export default async function DashboardPage({
 
   return (
     <DashboardScreen
-      {...getMockDashboardScreenData(
-        scenario,
-        journey,
-        createdGroup,
-        createdGroupQuery,
-      )}
+      {...getMockDashboardScreenData(scenario, createdGroup, createdGroupQuery)}
     />
   );
 }

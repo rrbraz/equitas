@@ -77,7 +77,6 @@ type DashboardScenario = "default" | "new";
 
 export function getMockDashboardScreenData(
   scenario: DashboardScenario = "default",
-  journey?: "login" | "signup",
   createdGroup?: Group,
   createdGroupQuery?: string,
 ): DashboardScreenData {
@@ -114,12 +113,5 @@ export function getMockDashboardScreenData(
     expenseLabel: isNewJourney ? "Criar primeiro grupo" : "Escolher grupo",
     createdGroupSlug: createdGroup?.slug,
     createdGroupQuery,
-    flashMessage:
-      journey === "signup"
-        ? "Conta mock criada. O próximo passo é montar seu primeiro grupo."
-        : journey === "login"
-          ? "Entrada mock concluída. Você já pode retomar seus fluxos."
-          : undefined,
-    flashTone: journey ? "success" : undefined,
   };
 }

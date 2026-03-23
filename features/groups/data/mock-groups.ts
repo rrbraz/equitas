@@ -1,6 +1,23 @@
 import type { Group, GroupContact } from "@/features/groups/types";
 import { mockCurrentViewer } from "@/features/viewer/data/mock-viewer";
 
+type MockExpenseInput = {
+  title: string;
+  amount: number;
+  paidBy: string;
+  category: string;
+  split: Array<{
+    member: string;
+    amount: number;
+  }>;
+};
+
+type MockTransferInput = {
+  payer: string;
+  receiver: string;
+  amount: number;
+};
+
 export const mockGroups: Group[] = [
   {
     id: "group-rio",
@@ -235,6 +252,22 @@ export const mockSelectedGroupMembers: GroupContact[] = [
 
 export const mockGroupCategories = ["Viagem", "Casa", "Refeição", "Outro"];
 
+function roundCurrency(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function buildSplitPreview(split: MockExpenseInput["split"]) {
+  if (split.length === 0) {
+    return "Sem participantes";
+  }
+
+  if (split.length >= 4) {
+    return `${split.length} pessoas`;
+  }
+
+  return split.map(({ member }) => member).join(", ");
+}
+
 export function getMockGroupBySlug(slug: string) {
   return mockGroups.find((group) => group.slug === slug);
 }
@@ -379,6 +412,75 @@ export function getMockCreatedGroupDetailScreenData({
       name,
       category,
       memberNames: members ?? [],
+    }),
+  };
+}
+
+export function applyMockExpenseToGroup(
+  group: Group,
+  expense: MockExpenseInput,
+) {
+  return {
+    ...group,
+    totalSpend: roundCurrency(group.totalSpend + expense.amount),
+    expenses: [
+      {
+        id: `exp-mock-${group.slug}`,
+        title: expense.title,
+        category: expense.category,
+        paidBy: expense.paidBy,
+        amount: expense.amount,
+        splitPreview: buildSplitPreview(expense.split),
+      },
+      ...group.expenses,
+    ],
+    members: group.members.map((member) => {
+      const memberShare =
+        expense.split.find((item) => item.member === member.member)?.amount ??
+        0;
+      const payerCredit = member.member === expense.paidBy ? expense.amount : 0;
+      const nextBalance = roundCurrency(
+        member.balance + payerCredit - memberShare,
+      );
+
+      return {
+        ...member,
+        balance: nextBalance,
+        expenseCount:
+          member.member === expense.paidBy
+            ? member.expenseCount + 1
+            : member.expenseCount,
+        role:
+          member.member === expense.paidBy
+            ? `${member.expenseCount + 1} despesas pagas`
+            : member.role,
+      };
+    }),
+  };
+}
+
+export function applyMockTransferToGroup(
+  group: Group,
+  transfer: MockTransferInput,
+) {
+  return {
+    ...group,
+    members: group.members.map((member) => {
+      if (member.member === transfer.payer) {
+        return {
+          ...member,
+          balance: roundCurrency(member.balance + transfer.amount),
+        };
+      }
+
+      if (member.member === transfer.receiver) {
+        return {
+          ...member,
+          balance: roundCurrency(member.balance - transfer.amount),
+        };
+      }
+
+      return member;
     }),
   };
 }

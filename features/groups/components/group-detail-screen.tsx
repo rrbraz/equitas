@@ -66,7 +66,7 @@ export function GroupDetailScreen({
               className="secondary-button"
             >
               <BanknoteArrowUp size={18} />
-              Quitar
+              Transferir saldo
             </Link>
             <Link
               href={`/grupos/${group.slug}/despesas/nova${querySuffix}`}

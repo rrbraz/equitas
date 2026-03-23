@@ -40,6 +40,4 @@ export type DashboardScreenData = {
   expenseLabel: string;
   createdGroupSlug?: string;
   createdGroupQuery?: string;
-  flashMessage?: string;
-  flashTone?: "success" | "info";
 };
