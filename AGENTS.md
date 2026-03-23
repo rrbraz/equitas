@@ -68,6 +68,8 @@ Consulte:
 - Não introduzir dependências novas sem justificar o ganho.
 - Evitar refactors amplos fora do escopo da história atual.
 - Ao encerrar uma história, atualizar o backlog e a documentação necessária.
+- Usar sempre Conventional Commits ao criar commits.
+- Usar tipos adequados ao contexto, por exemplo `feat: ...`, `fix: ...`, `docs: ...`, `refactor: ...`, `chore: ...`, `ci: ...`, `test: ...`.
 
 ## Fluxo Recomendado Para Agentes
 
