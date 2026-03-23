@@ -60,6 +60,119 @@ Critérios de aceite:
 - fluxos assíncronos não piscam nem falham sem feedback
 - ausência de dados é tratada como estado normal
 
+### H3.5. Fechar lacunas de interface e navegação antes do backend real
+
+Objetivo: remover interações cenográficas ou quebradas antes de conectar fluxos reais.
+
+Escopo desta etapa:
+
+- alinhar a experiência do protótipo com jornadas coerentes
+- manter tudo ainda em modo mock, sem depender de backend real
+- eliminar sinais falsos de funcionalidade nas telas principais
+
+Use cases que esta história deve cobrir em modo mock:
+
+- entrar no app
+- criar conta
+- fazer login
+- iniciar recuperação de acesso com `esqueci minha senha`
+- navegar entre dashboard, grupos, relatórios e perfil
+- criar grupo
+- adicionar participantes ao grupo
+- abrir detalhe do grupo
+- lançar despesa
+- preparar o caminho de quitação de despesas
+- editar dados básicos do perfil
+- iniciar troca de senha
+
+Tarefas:
+
+Auth e entrada:
+
+- [ ] Criar a rota e a tela de login.
+- [ ] Criar o fluxo mock de `esqueci minha senha`.
+- [ ] Definir a rota inicial correta entre `/`, `/cadastro` e `/login` no estado atual.
+- [ ] Garantir que cadastro, login e recuperação apontem um para o outro de forma coerente.
+- [ ] Revisar os botões sociais e decidir entre ligar a um fluxo mock explícito ou removê-los temporariamente.
+- [ ] Garantir que pós-login e pós-cadastro levem a uma experiência coerente para usuário novo sem dados.
+
+Shell e navegação global:
+
+- [ ] Decidir o comportamento do menu hamburguer no estado atual: abrir navegação real, abrir sheet simples ou remover temporariamente.
+- [ ] Aplicar esse comportamento de menu de forma consistente em dashboard, grupos, relatórios e perfil.
+- [ ] Revisar links quebrados ou rotas ausentes nas telas principais.
+- [ ] Garantir que a navegação inferior reflita corretamente o contexto atual em todas as rotas principais.
+- [ ] Revisar `not-found` e retornos de rota para não empurrarem o usuário para contextos incoerentes.
+
+Dashboard e fluxo de chegada:
+
+- [ ] Revisar o dashboard como primeira tela pós-auth para usuário sem grupos e sem atividade.
+- [ ] Remover ou corrigir CTAs secundários sem efeito no dashboard.
+- [ ] Garantir que o CTA principal do dashboard leve ao próximo passo mais lógico do usuário novo.
+- [ ] Revisar métricas e textos que hoje parecem dados “reais” demais para um estado de mock ou onboarding.
+
+Grupos e membros:
+
+- [ ] Revisar o fluxo de criação de grupo para parecer um fluxo real, mesmo ainda em mock.
+- [ ] Garantir que adicionar participantes tenha affordance coerente e não apenas visual.
+- [ ] Revisar CTAs sem efeito na listagem de grupos.
+- [ ] Revisar CTAs sem efeito no detalhe do grupo.
+- [ ] Definir um fluxo claro para `quitar despesas` no detalhe do grupo, mesmo que ainda seja placeholder navegável e explícito.
+- [ ] Garantir que links de grupo, criação e retorno preservem contexto.
+
+Despesas:
+
+- [ ] Revisar a tela de nova despesa para remover controles cenográficos ou convertê-los em fluxo mock explícito.
+- [ ] Garantir que salvar despesa e voltar para o grupo comuniquem claramente o resultado da ação.
+- [ ] Revisar affordances como categoria, data, pagador, divisão avançada e edição de split para não prometer comportamento inexistente.
+- [ ] Definir o menor fluxo coerente para `lançar despesa` sem backend real.
+
+Perfil e conta:
+
+- [ ] Revisar o fluxo de perfil para que `Editar perfil`, `Log out` e preferências tenham comportamento explícito.
+- [ ] Criar fluxo mock mínimo para atualização de cadastro.
+- [ ] Criar fluxo mock mínimo para troca de senha.
+- [ ] Decidir o que fica navegável, o que vira placeholder explícito e o que deve ser removido temporariamente.
+
+Linguagem e affordances:
+
+- [ ] Revisar labels como `Live`, `Monthly`, `History`, `Suggestions` e equivalentes para garantir que não pareçam interação quando forem apenas estado visual.
+- [ ] Unificar o idioma e o tom das telas principais.
+- [ ] Converter elementos clicáveis cenográficos em links reais, ações reais ou texto estático, caso a ação ainda não exista.
+
+Validação:
+
+- [ ] Validar navegação ponta a ponta nas rotas públicas e privadas mockadas.
+- [ ] Validar a jornada de usuário novo.
+- [ ] Validar a jornada de usuário com grupos existentes.
+- [ ] Validar a jornada mínima de criar grupo, abrir grupo, lançar despesa e iniciar quitação.
+
+Gaps mapeados no estado atual:
+
+- não existe tela de login
+- `/login` cai em `not-found`
+- `/` ainda redireciona direto para cadastro
+- menus hamburguer de dashboard, grupos, relatórios e perfil não fazem nada
+- o link `Entrar no app` na tela de cadastro pula login e leva direto ao dashboard
+- há botões de ajustes e ações locais sem efeito em dashboard, grupo, composer e perfil
+- `Settle up`, `Editar perfil`, `Log out`, `Sugestões` e ações semelhantes ainda são cenográficos
+- existem affordances visuais que parecem integrações reais, como botões sociais, sem fluxo definido
+- existem chips e ghost actions que parecem clicáveis, mas hoje funcionam só como decoração em algumas telas
+- o composer de despesa ainda mistura fluxo válido com vários controles sem efeito
+- o dashboard ainda precisa ser tratado como primeira experiência real de quem acabou de entrar
+- o fluxo de usuário novo precisa continuar coerente depois de cadastro e login
+- a navegação principal precisa ser consistente mesmo com dados inteiramente mockados
+
+Critérios de aceite:
+
+- não existem CTAs primários que pareçam funcionar mas não façam nada
+- login, navegação principal e links essenciais têm fluxo coerente mesmo ainda com mocks
+- o app deixa de depender de cliques “cenográficos” nas telas principais
+- a jornada pública mínima fica clara: entrar, criar conta, acessar o app e voltar entre rotas essenciais
+- existe uma jornada mock coerente para `login`, `esqueci senha`, `editar perfil` e `trocar senha`
+- existe uma jornada mock coerente para `criar grupo`, `adicionar participantes`, `lançar despesa` e `iniciar quitação`
+- componentes visuais que ainda não têm backend não enganam o usuário sobre disponibilidade real
+
 ## Epic 2. Supabase E Persistência
 
 ### H4. Consolidar ambiente Supabase para desenvolvimento e produção
@@ -399,22 +512,23 @@ Critérios de aceite:
 
 1. H1
 2. H2
-3. H4
-4. H5
-5. H6
-6. H7
-7. H8
-8. H9
-9. H10
-10. H12
-11. H15
-12. H16
-13. H17
-14. H18
-15. H19
-16. H20
-17. H21
-18. H22
+3. H3.5
+4. H4
+5. H5
+6. H6
+7. H7
+8. H8
+9. H9
+10. H10
+11. H12
+12. H15
+13. H16
+14. H17
+15. H18
+16. H19
+17. H20
+18. H21
+19. H22
 
 ## Primeiro Corte De MVP Real
 
@@ -422,6 +536,7 @@ Se quisermos sair rápido do protótipo para uma primeira versão utilizável, o
 
 - H1
 - H2
+- H3.5
 - H4
 - H5
 - H6
