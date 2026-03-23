@@ -16,6 +16,7 @@ Deixar frontend e backend reproduzíveis em desenvolvimento e previsíveis em de
 - `supabase/migrations/*.sql`: schema versionado
 - `supabase/seed.sql`: dados de desenvolvimento
 - `docs/schema-dominio.md`: decisões de modelagem do domínio
+- `docs/rls-testes-manuais.md`: guia de validação manual das políticas
 - `lib/supabase/browser.ts`: cliente público do navegador
 - `lib/supabase/server-client.ts`: cliente server-side com chave pública
 - `lib/supabase/admin-client.ts`: cliente administrativo com service role

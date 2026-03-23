@@ -41,6 +41,8 @@ Registrar as decisões do banco antes da conexão real dos fluxos principais.
 - Ele suporta convite por e-mail e convite por link interno com `token`.
 - O status é explícito via enum `group_invite_status`.
 - O convite registra quem convidou, quem aceitou e quando respondeu.
+- O aceite autenticado do convite passa por RPC, para preservar `role`, `token` e
+  expiração em uma única transação.
 
 ## Despesas, splits e settlements
 

@@ -218,14 +218,16 @@ Critérios de aceite:
 
 ### H6. Implantar autorização com RLS
 
+Status: concluída
+
 Objetivo: proteger dados por usuário e por grupo.
 
 Tarefas:
 
-- [ ] Definir políticas de leitura para membros de grupos.
-- [ ] Definir políticas de escrita para criação e edição de despesas.
-- [ ] Definir políticas de membership, convites e settlements.
-- [ ] Validar acessos indevidos com testes manuais guiados.
+- [x] Definir políticas de leitura para membros de grupos.
+- [x] Definir políticas de escrita para criação e edição de despesas.
+- [x] Definir políticas de membership, convites e settlements.
+- [x] Validar acessos indevidos com testes manuais guiados.
 
 Critérios de aceite:
 

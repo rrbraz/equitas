@@ -6,6 +6,7 @@
 - `seed.sql`: seed de desenvolvimento para ambiente local
 - `config.toml`: configuração do Supabase CLI para o repositório
 - `../docs/schema-dominio.md`: decisões de modelagem que orientam H6-H16
+- `../docs/rls-testes-manuais.md`: roteiro de validação manual de RLS
 
 ## Convenção de migrations
 
