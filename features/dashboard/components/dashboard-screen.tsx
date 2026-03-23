@@ -3,12 +3,12 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   House,
-  Menu,
   Plane,
-  Settings2,
   Sparkles,
 } from "lucide-react";
 
+import { ActionFeedback } from "@/components/action-feedback";
+import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
@@ -30,16 +30,40 @@ export function DashboardScreen({
   recentActivities,
   expenseHref,
   expenseLabel,
+  createdGroupSlug,
+  createdGroupQuery,
+  flashMessage,
+  flashTone,
 }: DashboardScreenData) {
+  const isOnboardingState =
+    totals.netBalance === 0 &&
+    totals.owedToYou === 0 &&
+    totals.youOwe === 0 &&
+    groupPreviews.length === 0 &&
+    recentActivities.length === 0;
+  const preservedParams = new URLSearchParams();
+  if (isOnboardingState) {
+    preservedParams.set("scenario", "new");
+  }
+  if (createdGroupQuery) {
+    const createdParams = new URLSearchParams(createdGroupQuery);
+
+    createdParams.forEach((value, key) => {
+      preservedParams.set(key, value);
+    });
+  }
+  const groupsHref = preservedParams.toString()
+    ? `/grupos?${preservedParams.toString()}`
+    : "/grupos";
+  const reportsHref = preservedParams.toString()
+    ? `/relatorios?${preservedParams.toString()}`
+    : "/relatorios";
+
   return (
     <div className="screen-shell">
       <TopBar
         title="Equitas"
-        leading={
-          <button className="icon-button" type="button" aria-label="Abrir menu">
-            <Menu size={18} />
-          </button>
-        }
+        leading={<AppMenu />}
         trailing={
           <Avatar
             name={viewer.name}
@@ -51,21 +75,29 @@ export function DashboardScreen({
       />
 
       <main className="page-content">
+        {flashMessage ? (
+          <ActionFeedback
+            tone={flashTone ?? "success"}
+            title="Jornada atualizada"
+            message={flashMessage}
+          />
+        ) : null}
+
         <section className="hero-card hero-card--light">
-          <span className="section-label">Net balance</span>
+          <span className="section-label">Saldo líquido</span>
           <h1 className="hero-amount">{formatCurrency(totals.netBalance)}</h1>
           <div className="hero-balance-row">
             <div className="metric-card money-positive">
               <span>
                 <ArrowUpRight size={14} />
-                Owed to you
+                Devem para você
               </span>
               <strong>{formatCurrency(totals.owedToYou)}</strong>
             </div>
             <div className="metric-card money-negative">
               <span>
                 <ArrowDownRight size={14} />
-                You owe
+                Você deve
               </span>
               <strong>{formatCurrency(totals.youOwe)}</strong>
             </div>
@@ -74,22 +106,22 @@ export function DashboardScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Your Groups</h2>
-            <Link href="/grupos" className="ghost-link">
-              See all
+            <h2>Seus grupos</h2>
+            <Link href={groupsHref} className="ghost-link">
+              Ver todos
             </Link>
           </div>
           {groupPreviews.length > 0 ? (
             <div className="list-stack">
               {groupPreviews.map((group) => {
                 const GroupIcon = groupIcons[group.icon];
+                const groupHref =
+                  createdGroupSlug === group.slug && createdGroupQuery
+                    ? `/grupos/${group.slug}?${createdGroupQuery}`
+                    : `/grupos/${group.slug}`;
 
                 return (
-                  <Link
-                    key={group.id}
-                    href={`/grupos/${group.slug}`}
-                    className="list-card"
-                  >
+                  <Link key={group.id} href={groupHref} className="list-card">
                     <div className="inline-card__avatar inline-card__avatar--soft">
                       <GroupIcon size={18} />
                     </div>
@@ -100,7 +132,9 @@ export function DashboardScreen({
                       </p>
                     </div>
                     <div className="list-card__value">
-                      <span>{group.balance >= 0 ? "Owed" : "Owe"}</span>
+                      <span>
+                        {group.balance >= 0 ? "A receber" : "A pagar"}
+                      </span>
                       <strong
                         className={
                           group.balance >= 0
@@ -128,9 +162,9 @@ export function DashboardScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Recent Activity</h2>
-            <Link href="/relatorios" className="ghost-link">
-              History
+            <h2>Atividade recente</h2>
+            <Link href={reportsHref} className="ghost-link">
+              Relatórios
             </Link>
           </div>
           {recentActivities.length > 0 ? (
@@ -167,7 +201,7 @@ export function DashboardScreen({
               eyebrow="Sem atividade recente"
               title="As movimentações aparecem aqui"
               description="Quando alguém criar grupos, lançar despesas ou liquidar valores, o histórico recente passa a alimentar este bloco."
-              actionHref="/grupos"
+              actionHref={groupsHref}
               actionLabel="Explorar grupos"
             />
           )}
@@ -176,31 +210,42 @@ export function DashboardScreen({
         <section className="report-card">
           <div className="section-heading">
             <div>
-              <span className="section-label">Quick pulse</span>
-              <h2>Momento financeiro</h2>
+              <span className="section-label">Panorama rápido</span>
+              <h2>
+                {isOnboardingState
+                  ? "Próximo passo recomendado"
+                  : "Momento financeiro"}
+              </h2>
             </div>
-            <button
-              className="icon-button icon-button--soft"
-              type="button"
-              aria-label="Ajustar painel"
-            >
-              <Settings2 size={16} />
-            </button>
+            <Link href={reportsHref} className="ghost-link">
+              Ver leitura
+            </Link>
           </div>
           <p className="supporting-copy">
-            O grupo de viagem segue puxando caixa positivo e as últimas
-            quitações melhoraram o balanço geral.
+            {isOnboardingState
+              ? "Assim que você criar o primeiro grupo, este bloco passa a resumir volume, pendências e saúde de quitação."
+              : "O grupo de viagem segue puxando caixa positivo e as últimas quitações melhoraram o balanço geral."}
           </p>
           <div className="metric-grid">
             <div className="summary-card">
-              <span className="section-label">Transactions</span>
-              <strong>18</strong>
-              <p className="list-card__meta">últimos 30 dias</p>
+              <span className="section-label">
+                {isOnboardingState ? "Grupos" : "Movimentos"}
+              </span>
+              <strong>{isOnboardingState ? "0" : "18"}</strong>
+              <p className="list-card__meta">
+                {isOnboardingState ? "prontos para começar" : "últimos 30 dias"}
+              </p>
             </div>
             <div className="summary-card">
-              <span className="section-label">Pending</span>
-              <strong>3</strong>
-              <p className="list-card__meta">settlements abertos</p>
+              <span className="section-label">
+                {isOnboardingState ? "Pendências" : "Pendências"}
+              </span>
+              <strong>{isOnboardingState ? "0" : "3"}</strong>
+              <p className="list-card__meta">
+                {isOnboardingState
+                  ? "até a primeira despesa"
+                  : "quitações abertas"}
+              </p>
             </div>
           </div>
         </section>

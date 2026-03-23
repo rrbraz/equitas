@@ -1,5 +1,4 @@
-import { Menu } from "lucide-react";
-
+import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
@@ -16,16 +15,13 @@ export function ReportsScreen({
 }: ReportsScreenData) {
   const hasReportData =
     monthlyBalances.length > 0 || reportCategories.length > 0;
+  const groupsHref = hasReportData ? "/grupos" : "/grupos?scenario=new";
 
   return (
     <div className="screen-shell">
       <TopBar
         title="Equitas"
-        leading={
-          <button className="icon-button" type="button" aria-label="Abrir menu">
-            <Menu size={18} />
-          </button>
-        }
+        leading={<AppMenu />}
         trailing={
           <Avatar
             name={viewer.name}
@@ -38,19 +34,19 @@ export function ReportsScreen({
 
       <main className="page-content">
         <section className="hero-copy">
-          <span className="eyebrow-note">Equilibrium analysis</span>
-          <h1>Financial atelier.</h1>
+          <span className="eyebrow-note">Leitura financeira</span>
+          <h1>Relatórios.</h1>
           <p>
             Uma visão editorial do comportamento financeiro dos seus grupos com
-            foco em fluxo, categoria e saúde de settlement.
+            foco em fluxo, categoria e saúde de quitação.
           </p>
         </section>
 
         <section className="report-card">
           <div className="section-heading">
             <div>
-              <span className="section-label">Overview balance</span>
-              <h2>Spending over time</h2>
+              <span className="section-label">Resumo</span>
+              <h2>Gastos ao longo do tempo</h2>
             </div>
             <strong className="money-negative">
               {formatCurrency(totals.youOwe)}
@@ -58,13 +54,13 @@ export function ReportsScreen({
           </div>
           <div className="metric-grid">
             <div className="summary-card">
-              <span className="section-label">You owe</span>
+              <span className="section-label">Você deve</span>
               <strong className="money-negative">
                 {formatCurrency(totals.youOwe)}
               </strong>
             </div>
             <div className="summary-card">
-              <span className="section-label">Owed to you</span>
+              <span className="section-label">Devem para você</span>
               <strong className="money-positive">
                 {formatCurrency(totals.owedToYou)}
               </strong>
@@ -77,8 +73,8 @@ export function ReportsScreen({
               <EmptyState
                 eyebrow="Relatório em preparação"
                 title="Ainda não há histórico suficiente"
-                description="Assim que os grupos começarem a registrar despesas reais, esta área passa a mostrar ritmo, concentração e saúde de settlement."
-                actionHref="/grupos"
+                description="Assim que os grupos começarem a registrar despesas reais, esta área passa a mostrar ritmo, concentração e saúde de quitação."
+                actionHref={groupsHref}
                 actionLabel="Ver grupos"
               />
             </div>
@@ -88,8 +84,8 @@ export function ReportsScreen({
         {reportCategories.length > 0 ? (
           <section className="stack-column">
             <div className="section-heading">
-              <h2>By category</h2>
-              <span className="ghost-link">Monthly</span>
+              <h2>Por categoria</h2>
+              <span className="section-label">Mensal</span>
             </div>
             {reportCategories.map((category) => (
               <article key={category.name} className="report-card stack-column">
@@ -113,7 +109,7 @@ export function ReportsScreen({
 
         {hasReportData ? (
           <section className="report-card stack-column">
-            <span className="section-label">Settlement health</span>
+            <span className="section-label">Saúde de quitação</span>
             <h2>8.4</h2>
             <p className="supporting-copy">
               Seu sistema está estável. A maioria dos grupos liquida rápido e

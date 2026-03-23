@@ -2,6 +2,7 @@ export type ProfilePreference = {
   icon: "account" | "notifications" | "payments" | "security";
   title: string;
   description: string;
+  href?: string;
 };
 
 export type ProfileSummaryTotals = {
@@ -21,4 +22,7 @@ export type ProfileScreenData = {
   };
   totals: ProfileSummaryTotals;
   preferences: ProfilePreference[];
+  scenario?: "default" | "new";
+  flashMessage?: string;
+  flashTone?: "success" | "info";
 };

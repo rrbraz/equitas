@@ -4,6 +4,7 @@ import type {
   DashboardScreenData,
   DashboardTotals,
 } from "@/features/dashboard/types";
+import type { Group } from "@/features/groups/types";
 import { mockCurrentViewer } from "@/features/viewer/data/mock-viewer";
 
 export const mockDashboardTotals: DashboardTotals = {
@@ -61,13 +62,64 @@ export const mockDashboardGroupPreviews: DashboardGroupPreview[] = [
   },
 ];
 
-export function getMockDashboardScreenData(): DashboardScreenData {
+function getDashboardGroupPreview(group: Group): DashboardGroupPreview {
+  return {
+    id: group.id,
+    slug: group.slug,
+    name: group.name,
+    memberCount: group.memberCount,
+    balance: group.balance,
+    icon: "sparkles",
+  };
+}
+
+type DashboardScenario = "default" | "new";
+
+export function getMockDashboardScreenData(
+  scenario: DashboardScenario = "default",
+  journey?: "login" | "signup",
+  createdGroup?: Group,
+  createdGroupQuery?: string,
+): DashboardScreenData {
+  const isNewJourney = scenario === "new";
+  const groupPreviews = isNewJourney ? [] : mockDashboardGroupPreviews;
+  const recentActivities = isNewJourney ? [] : mockRecentActivities;
+
   return {
     viewer: mockCurrentViewer,
-    totals: mockDashboardTotals,
-    groupPreviews: mockDashboardGroupPreviews,
-    recentActivities: mockRecentActivities,
-    expenseHref: "/grupos",
-    expenseLabel: "Escolher grupo",
+    totals: isNewJourney
+      ? { netBalance: 0, owedToYou: 0, youOwe: 0 }
+      : mockDashboardTotals,
+    groupPreviews: createdGroup
+      ? [
+          getDashboardGroupPreview(createdGroup),
+          ...groupPreviews.filter((group) => group.slug !== createdGroup.slug),
+        ]
+      : groupPreviews,
+    recentActivities: createdGroup
+      ? [
+          {
+            id: `act-created-${createdGroup.slug}`,
+            person: "Você",
+            initials: mockCurrentViewer.initials,
+            tone: "amber",
+            action: `criou o grupo "${createdGroup.name}"`,
+            amount: 0,
+            createdAt: "Agora",
+          },
+          ...recentActivities,
+        ]
+      : recentActivities,
+    expenseHref: isNewJourney ? "/grupos/criar" : "/grupos",
+    expenseLabel: isNewJourney ? "Criar primeiro grupo" : "Escolher grupo",
+    createdGroupSlug: createdGroup?.slug,
+    createdGroupQuery,
+    flashMessage:
+      journey === "signup"
+        ? "Conta mock criada. O próximo passo é montar seu primeiro grupo."
+        : journey === "login"
+          ? "Entrada mock concluída. Você já pode retomar seus fluxos."
+          : undefined,
+    flashTone: journey ? "success" : undefined,
   };
 }

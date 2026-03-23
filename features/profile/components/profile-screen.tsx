@@ -1,12 +1,8 @@
-import {
-  Bell,
-  LockKeyhole,
-  LogOut,
-  Menu,
-  UserRound,
-  Wallet,
-} from "lucide-react";
+import { Bell, LockKeyhole, LogOut, UserRound, Wallet } from "lucide-react";
+import Link from "next/link";
 
+import { ActionFeedback } from "@/components/action-feedback";
+import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { TopBar } from "@/components/top-bar";
@@ -24,16 +20,17 @@ export function ProfileScreen({
   viewer,
   totals,
   preferences,
+  scenario,
+  flashMessage,
+  flashTone,
 }: ProfileScreenData) {
+  const scenarioSuffix = scenario === "new" ? "?scenario=new" : "";
+
   return (
     <div className="screen-shell">
       <TopBar
         title="Equitas"
-        leading={
-          <button className="icon-button" type="button" aria-label="Abrir menu">
-            <Menu size={18} />
-          </button>
-        }
+        leading={<AppMenu />}
         trailing={
           <Avatar
             name={viewer.name}
@@ -45,6 +42,14 @@ export function ProfileScreen({
       />
 
       <main className="page-content">
+        {flashMessage ? (
+          <ActionFeedback
+            tone={flashTone ?? "success"}
+            title="Conta atualizada"
+            message={flashMessage}
+          />
+        ) : null}
+
         <section className="surface-card profile-hero">
           <Avatar
             name={viewer.name}
@@ -59,20 +64,23 @@ export function ProfileScreen({
               {viewer.role} · {viewer.memberSinceLabel}
             </p>
           </div>
-          <button className="primary-button" type="button">
+          <Link
+            href={`/perfil/editar${scenarioSuffix}`}
+            className="primary-button"
+          >
             Editar perfil
-          </button>
+          </Link>
         </section>
 
         <section className="metric-grid">
           <article className="summary-card">
-            <span className="section-label">Owed to you</span>
+            <span className="section-label">Devem para você</span>
             <strong className="money-positive">
               {formatCurrency(totals.owedToYou)}
             </strong>
           </article>
           <article className="summary-card">
-            <span className="section-label">You owe</span>
+            <span className="section-label">Você deve</span>
             <strong className="money-negative">
               {formatCurrency(totals.youOwe)}
             </strong>
@@ -82,9 +90,8 @@ export function ProfileScreen({
         <section className="settings-list">
           {preferences.map((item) => {
             const Icon = preferenceIcons[item.icon];
-
-            return (
-              <div key={item.title} className="setting-row">
+            const content = (
+              <>
                 <span className="setting-row__icon">
                   <Icon size={18} />
                 </span>
@@ -92,17 +99,43 @@ export function ProfileScreen({
                   <strong>{item.title}</strong>
                   <p>{item.description}</p>
                 </div>
+              </>
+            );
+
+            if (item.href) {
+              return (
+                <Link
+                  key={item.title}
+                  href={
+                    scenario === "new" && item.href.startsWith("/perfil")
+                      ? `${item.href}${item.href.includes("?") ? "&" : "?"}scenario=new`
+                      : item.href
+                  }
+                  className="setting-row"
+                >
+                  {content}
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={item.title}
+                className="setting-row"
+                aria-disabled="true"
+              >
+                {content}
               </div>
             );
           })}
         </section>
 
-        <button className="logout-button" type="button">
+        <Link href="/login?logout=1" className="logout-button">
           <LogOut size={18} />
-          Log out
-        </button>
+          Sair
+        </Link>
 
-        <p className="mono-caption">Versão 0.1.0 · stitched mobile prototype</p>
+        <p className="mono-caption">Versão 0.1.0 · protótipo navegável</p>
       </main>
 
       <BottomNav />

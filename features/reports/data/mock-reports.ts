@@ -25,11 +25,19 @@ export const mockReportsOverviewTotals: ReportsOverviewTotals = {
   youOwe: 657.5,
 };
 
-export function getMockReportsScreenData(): ReportsScreenData {
+type ReportsScenario = "default" | "new";
+
+export function getMockReportsScreenData(
+  scenario: ReportsScenario = "default",
+): ReportsScreenData {
+  const isNewScenario = scenario === "new";
+
   return {
     viewer: mockCurrentViewer,
-    totals: mockReportsOverviewTotals,
-    monthlyBalances: mockMonthlyBalances,
-    reportCategories: mockReportCategories,
+    totals: isNewScenario
+      ? { owedToYou: 0, youOwe: 0 }
+      : mockReportsOverviewTotals,
+    monthlyBalances: isNewScenario ? [] : mockMonthlyBalances,
+    reportCategories: isNewScenario ? [] : mockReportCategories,
   };
 }

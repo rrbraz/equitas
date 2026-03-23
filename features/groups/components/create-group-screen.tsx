@@ -10,7 +10,7 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { ActionFeedback } from "@/components/action-feedback";
 import { Avatar } from "@/components/avatar";
@@ -24,7 +24,6 @@ type CreateGroupScreenProps = {
   categories: string[];
   selectedMembers: GroupContact[];
   frequentConnections: GroupContact[];
-  createGroupHref: string;
   actionErrorMessage?: string;
 };
 
@@ -33,19 +32,46 @@ export function CreateGroupScreen({
   categories,
   selectedMembers,
   frequentConnections,
-  createGroupHref,
   actionErrorMessage,
 }: CreateGroupScreenProps) {
   const router = useRouter();
-  const [groupName, setGroupName] = useState("Summer Roadtrip");
+  const [groupName, setGroupName] = useState("Roadtrip de Verao");
   const [activeCategory, setActiveCategory] = useState(
-    categories[0] ?? "Other",
+    categories[0] ?? "Outro",
   );
+  const [memberQuery, setMemberQuery] = useState("");
+  const [selectedMembersState, setSelectedMembersState] =
+    useState(selectedMembers);
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
   const [isPending, startTransition] = useTransition();
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
+  const suggestedInvite =
+    memberQuery.includes("@") &&
+    !selectedMembersState.some(
+      (member) => member.name === memberQuery.trim(),
+    ) &&
+    !frequentConnections.some((contact) => contact.name === memberQuery.trim())
+      ? memberQuery.trim()
+      : "";
+  const filteredConnections = useMemo(
+    () =>
+      frequentConnections.filter((contact) => {
+        if (
+          selectedMembersState.some((member) => member.name === contact.name)
+        ) {
+          return false;
+        }
+
+        if (!memberQuery.trim()) {
+          return true;
+        }
+
+        return contact.name.toLowerCase().includes(memberQuery.toLowerCase());
+      }),
+    [frequentConnections, memberQuery, selectedMembersState],
+  );
 
   function handleSubmit() {
     if (!groupName.trim()) {
@@ -55,16 +81,55 @@ export function CreateGroupScreen({
       return;
     }
 
-    if (selectedMembers.length === 0) {
+    if (selectedMembersState.length === 0) {
       setSubmitErrorMessage(
         "Adicione pelo menos um participante para iniciar o grupo.",
       );
       return;
     }
 
+    const slug = groupName
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const params = new URLSearchParams({
+      created: "1",
+      name: groupName.trim(),
+      category: activeCategory,
+      members: selectedMembersState.map((member) => member.name).join("|"),
+    });
+
     setSubmitErrorMessage(null);
     startTransition(() => {
-      router.push(createGroupHref);
+      router.push(`/grupos/${slug || "novo-grupo"}?${params.toString()}`);
+    });
+  }
+
+  function handleAddMember(member: GroupContact) {
+    setSelectedMembersState((current) => [...current, member]);
+    setSubmitErrorMessage(null);
+    setMemberQuery("");
+  }
+
+  function handleRemoveMember(memberName: string) {
+    setSelectedMembersState((current) =>
+      current.filter((member) => member.name !== memberName),
+    );
+    setSubmitErrorMessage(null);
+  }
+
+  function handleInviteByEmail(email: string) {
+    const normalizedEmail = email.trim();
+
+    if (!normalizedEmail.includes("@")) {
+      return;
+    }
+
+    handleAddMember({
+      name: normalizedEmail,
+      initials: normalizedEmail.slice(0, 2).toUpperCase(),
+      tone: "rose",
     });
   }
 
@@ -96,8 +161,8 @@ export function CreateGroupScreen({
         ) : null}
 
         <section className="hero-copy">
-          <span className="eyebrow-note">New circle</span>
-          <h1>Crie um grupo com cara de private desk.</h1>
+          <span className="eyebrow-note">Novo grupo</span>
+          <h1>Crie um grupo pronto para dividir gastos.</h1>
           <p>
             Defina nome, categoria e adicione os membros frequentes em um fluxo
             enxuto.
@@ -140,9 +205,9 @@ export function CreateGroupScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Add members</h2>
+            <h2>Adicionar participantes</h2>
             <span className="stat-chip stat-chip--positive">
-              {selectedMembers.length} added
+              {selectedMembersState.length} adicionados
             </span>
           </div>
 
@@ -150,15 +215,23 @@ export function CreateGroupScreen({
             <span className="input-shell__icon">
               <Search size={18} />
             </span>
-            <input placeholder="Search contacts or type email" />
+            <input
+              placeholder="Buscar contato ou digitar email para convidar"
+              value={memberQuery}
+              onChange={(event) => {
+                setMemberQuery(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
+            />
           </label>
 
           <div className="member-pills">
-            {selectedMembers.map((member) => (
+            {selectedMembersState.map((member) => (
               <button
                 key={member.name}
                 type="button"
                 className="member-chip split-pill"
+                onClick={() => handleRemoveMember(member.name)}
               >
                 <Avatar
                   name={member.name}
@@ -171,16 +244,34 @@ export function CreateGroupScreen({
               </button>
             ))}
           </div>
+
+          {suggestedInvite ? (
+            <button
+              type="button"
+              className="quick-card quick-card--invite"
+              onClick={() => handleInviteByEmail(suggestedInvite)}
+            >
+              <strong>Convidar {suggestedInvite}</strong>
+              <p className="list-card__meta">
+                Adicionar participante por email
+              </p>
+            </button>
+          ) : null}
         </section>
 
         <section className="report-card stack-column">
           <div className="section-heading">
-            <h2>Frequent connections</h2>
+            <h2>Contatos frequentes</h2>
             <Sparkles size={18} color="var(--primary-bright)" />
           </div>
           <div className="quick-grid">
-            {frequentConnections.map((contact) => (
-              <article key={contact.name} className="quick-card">
+            {filteredConnections.map((contact) => (
+              <button
+                key={contact.name}
+                type="button"
+                className="quick-card"
+                onClick={() => handleAddMember(contact)}
+              >
                 <Avatar
                   name={contact.name}
                   initials={contact.initials}
@@ -189,7 +280,7 @@ export function CreateGroupScreen({
                 />
                 <strong>{contact.name}</strong>
                 <p className="list-card__meta">Adicionar rápido</p>
-              </article>
+              </button>
             ))}
           </div>
         </section>

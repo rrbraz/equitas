@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
-import { ActionFeedback } from "@/components/action-feedback";
+import { ArrowRight, KeyRound } from "lucide-react";
 import { useState, useTransition } from "react";
 
-type SignUpScreenProps = {
+import { ActionFeedback } from "@/components/action-feedback";
+
+type LoginScreenProps = {
   actionErrorMessage?: string;
+  infoMessage?: string;
 };
 
-export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
+export function LoginScreen({
+  actionErrorMessage,
+  infoMessage,
+}: LoginScreenProps) {
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
@@ -22,24 +26,19 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
 
   function handleSubmit() {
-    if (!fullName.trim()) {
-      setSubmitErrorMessage("Informe seu nome completo para continuar.");
-      return;
-    }
-
     if (!email.includes("@")) {
-      setSubmitErrorMessage("Use um e-mail válido para criar sua conta.");
+      setSubmitErrorMessage("Use um e-mail válido para entrar.");
       return;
     }
 
     if (password.length < 8) {
-      setSubmitErrorMessage("A senha precisa ter pelo menos 8 caracteres.");
+      setSubmitErrorMessage("Informe uma senha com pelo menos 8 caracteres.");
       return;
     }
 
     setSubmitErrorMessage(null);
     startTransition(() => {
-      router.push("/dashboard?scenario=new&journey=signup");
+      router.push("/dashboard?journey=login");
     });
   }
 
@@ -47,35 +46,31 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
     <div className="auth-shell">
       <div className="auth-header">
         <div className="brand-mark">Equitas</div>
-        <p className="eyebrow-note">Criar conta.</p>
-        <h1 className="auth-headline">Clareza financeira para grupos.</h1>
+        <p className="eyebrow-note">Entrar.</p>
+        <h1 className="auth-headline">Entre e retome seus grupos.</h1>
         <p className="auth-subcopy">
-          Crie sua conta, organize despesas compartilhadas e leve o backend para
-          o Supabase desde o primeiro deploy.
+          Acesse dashboard, despesas e saldos com um fluxo simples enquanto o
+          backend real ainda está em transição.
         </p>
       </div>
 
       <section className="auth-panel">
+        {infoMessage ? (
+          <ActionFeedback
+            tone="success"
+            title="Fluxo preparado"
+            message={infoMessage}
+          />
+        ) : null}
+
         {feedbackMessage ? (
           <ActionFeedback
-            title="Não foi possível criar sua conta"
+            title="Não foi possível entrar"
             message={feedbackMessage}
           />
         ) : null}
 
         <div className="form-stack">
-          <label>
-            <span className="field-label">Nome completo</span>
-            <input
-              className="input-plain"
-              placeholder="Ex.: Julian Smith"
-              value={fullName}
-              onChange={(event) => {
-                setFullName(event.target.value);
-                setSubmitErrorMessage(null);
-              }}
-            />
-          </label>
           <label>
             <span className="field-label">Email</span>
             <input
@@ -93,7 +88,7 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
             <span className="field-label">Senha</span>
             <input
               className="input-plain"
-              placeholder="Min. 8 caracteres"
+              placeholder="Sua senha"
               type="password"
               value={password}
               onChange={(event) => {
@@ -110,29 +105,22 @@ export function SignUpScreen({ actionErrorMessage }: SignUpScreenProps) {
           onClick={handleSubmit}
           disabled={isPending}
         >
-          {isPending ? "Criando conta..." : "Criar conta"}
+          {isPending ? "Entrando..." : "Entrar"}
           <ArrowRight size={18} />
         </button>
 
-        <ActionFeedback
-          tone="info"
-          title="Login social ainda não entrou"
-          message="Enquanto o auth real não chega, use email e senha mockados para validar a jornada principal."
-        />
+        <Link href="/recuperar-acesso" className="ghost-link auth-link-row">
+          <KeyRound size={16} />
+          Esqueci minha senha
+        </Link>
 
         <p className="mono-caption">
-          Já tem conta?{" "}
-          <Link href="/login" className="inline-link">
-            Fazer login
+          Ainda não tem conta?{" "}
+          <Link href="/cadastro" className="inline-link">
+            Criar conta
           </Link>
         </p>
       </section>
-
-      <div className="footer-links">
-        <span>Privacidade</span>
-        <span>Termos</span>
-        <span>Segurança</span>
-      </div>
     </div>
   );
 }

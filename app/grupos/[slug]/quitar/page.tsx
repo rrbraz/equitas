@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 
-import { ExpenseComposer } from "@/features/expenses/components/expense-composer";
-import { getMockExpenseComposerData } from "@/features/expenses/data/mock-expense-composer";
-import { getMockCreatedGroupDetailScreenData } from "@/features/groups/data/mock-groups";
+import { GroupSettlementScreen } from "@/features/groups/components/group-settlement-screen";
+import {
+  getMockCreatedGroupDetailScreenData,
+  getMockGroupDetailScreenData,
+} from "@/features/groups/data/mock-groups";
 
-export default async function NovaDespesaDoGrupoPage({
+export default async function QuitarGrupoPage({
   params,
   searchParams,
 }: {
@@ -18,18 +20,18 @@ export default async function NovaDespesaDoGrupoPage({
 }) {
   const { slug } = await params;
   const query = await searchParams;
-  const screenData = getMockExpenseComposerData(slug);
-  const createdGroupData =
-    query.created === "1"
+  const screenData =
+    getMockGroupDetailScreenData(slug) ??
+    (query.created === "1"
       ? getMockCreatedGroupDetailScreenData({
           slug,
           name: query.name,
           category: query.category,
           members: query.members?.split("|").filter(Boolean),
         })
-      : null;
+      : null);
 
-  if (!screenData && !createdGroupData) {
+  if (!screenData) {
     notFound();
   }
 
@@ -48,8 +50,8 @@ export default async function NovaDespesaDoGrupoPage({
   }
 
   return (
-    <ExpenseComposer
-      groupSlug={slug}
+    <GroupSettlementScreen
+      {...screenData}
       groupQuery={groupQuery.toString() || undefined}
     />
   );

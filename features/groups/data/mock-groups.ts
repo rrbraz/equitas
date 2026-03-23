@@ -7,7 +7,7 @@ export const mockGroups: Group[] = [
     slug: "viagem-rio",
     name: "Viagem Rio",
     tone: "indigo",
-    category: "Travel",
+    category: "Viagem",
     memberCount: 4,
     balance: 450,
     totalSpend: 4280,
@@ -44,7 +44,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-jantar",
         title: "Jantar no Copacabana Palace",
-        category: "Food",
+        category: "Comida",
         paidBy: "Você",
         amount: 450,
         splitPreview: "Você + Leo + Ana",
@@ -52,7 +52,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-airbnb",
         title: "Hospedagem Airbnb",
-        category: "Stay",
+        category: "Hospedagem",
         paidBy: "Você",
         amount: 2800,
         splitPreview: "4 pessoas",
@@ -60,7 +60,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-uber",
         title: "Uber Aeroporto",
-        category: "Transit",
+        category: "Transporte",
         paidBy: "Ricardo",
         amount: 120,
         splitPreview: "Você, Ricardo, Bia",
@@ -72,13 +72,13 @@ export const mockGroups: Group[] = [
     slug: "aluguel-casa",
     name: "Aluguel Casa",
     tone: "green",
-    category: "Utilities",
+    category: "Casa",
     memberCount: 3,
     balance: 0,
     totalSpend: 6120,
     description:
       "Custos fixos do apartamento compartilhado e contas recorrentes.",
-    trend: "Estavel",
+    trend: "Estável",
     members: [
       {
         member: "Você",
@@ -109,7 +109,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-internet",
         title: "Internet Fibra",
-        category: "Utilities",
+        category: "Casa",
         paidBy: "Marina",
         amount: 199.9,
         splitPreview: "3 pessoas",
@@ -117,7 +117,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-luz",
         title: "Conta de luz",
-        category: "Utilities",
+        category: "Casa",
         paidBy: "Você",
         amount: 287.4,
         splitPreview: "3 pessoas",
@@ -129,7 +129,7 @@ export const mockGroups: Group[] = [
     slug: "jantar-de-ontem",
     name: "Jantar de Ontem",
     tone: "rose",
-    category: "Food",
+    category: "Comida",
     memberCount: 6,
     balance: -12.4,
     totalSpend: 74.4,
@@ -157,7 +157,7 @@ export const mockGroups: Group[] = [
       {
         id: "exp-vinho",
         title: "Vinho e sobremesa",
-        category: "Food",
+        category: "Comida",
         paidBy: "Joana",
         amount: 74.4,
         splitPreview: "6 pessoas",
@@ -167,9 +167,9 @@ export const mockGroups: Group[] = [
   {
     id: "group-roadtrip",
     slug: "summer-roadtrip",
-    name: "Summer Roadtrip",
+    name: "Roadtrip de Verao",
     tone: "amber",
-    category: "Travel",
+    category: "Viagem",
     memberCount: 4,
     balance: 0,
     totalSpend: 0,
@@ -180,7 +180,7 @@ export const mockGroups: Group[] = [
         member: "Você",
         initials: "JV",
         tone: "amber",
-        role: "Owner",
+        role: "Responsável",
         expenseCount: 0,
         balance: 0,
       },
@@ -224,7 +224,7 @@ export const mockFrequentConnections: GroupContact[] = [
   { name: "Alex", initials: "AX", tone: "indigo" },
   { name: "Elena", initials: "EL", tone: "amber" },
   { name: "Jake", initials: "JK", tone: "rose" },
-  { name: "Convidar", initials: "+", tone: "green" },
+  { name: "Priya", initials: "PR", tone: "green" },
 ];
 
 export const mockSelectedGroupMembers: GroupContact[] = [
@@ -233,27 +233,114 @@ export const mockSelectedGroupMembers: GroupContact[] = [
   { name: "David Wu", initials: "DW", tone: "green" },
 ];
 
-export const mockGroupCategories = ["Travel", "Home", "Dining", "Other"];
+export const mockGroupCategories = ["Viagem", "Casa", "Refeição", "Outro"];
 
 export function getMockGroupBySlug(slug: string) {
   return mockGroups.find((group) => group.slug === slug);
 }
 
-export function getMockGroupsScreenData() {
+type GroupsScenario = "default" | "new";
+
+function getContactTone(index: number): GroupContact["tone"] {
+  const tones: GroupContact["tone"][] = ["amber", "green", "indigo", "rose"];
+
+  return tones[index % tones.length];
+}
+
+function getInitials(name: string) {
+  return name
+    .split(/[\s@._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.slice(0, 1).toUpperCase())
+    .join("");
+}
+
+function getContactByName(name: string) {
+  return [
+    ...mockQuickStartContacts,
+    ...mockFrequentConnections,
+    ...mockSelectedGroupMembers,
+  ].find((contact) => contact.name === name);
+}
+
+function buildCreatedGroup({
+  slug,
+  name,
+  category,
+  memberNames,
+}: {
+  slug: string;
+  name: string;
+  category: string;
+  memberNames: string[];
+}): Group {
+  const uniqueMembers = memberNames.filter(
+    (member, index, members) => members.indexOf(member) === index,
+  );
+
+  return {
+    id: `group-${slug}`,
+    slug,
+    name,
+    tone: "amber",
+    category,
+    memberCount: uniqueMembers.length + 1,
+    balance: 0,
+    totalSpend: 0,
+    description: "Grupo recém-criado em modo mock para validar a jornada.",
+    trend: "Novo",
+    members: [
+      {
+        member: "Você",
+        initials: mockCurrentViewer.initials,
+        tone: "amber",
+        role: "Responsável",
+        expenseCount: 0,
+        balance: 0,
+      },
+      ...uniqueMembers.map((memberName, index) => {
+        const knownContact = getContactByName(memberName);
+
+        return {
+          member: memberName,
+          initials: knownContact?.initials ?? getInitials(memberName),
+          tone: knownContact?.tone ?? getContactTone(index + 1),
+          role: memberName.includes("@") ? "Convidado por email" : "Convidado",
+          expenseCount: 0,
+          balance: 0,
+        };
+      }),
+    ],
+    expenses: [],
+  };
+}
+
+export function getMockGroupsScreenData(scenario: GroupsScenario = "default") {
   return {
     viewer: mockCurrentViewer,
-    groups: mockGroups,
+    groups: scenario === "new" ? [] : mockGroups,
     quickStartContacts: mockQuickStartContacts,
   };
 }
 
-export function getMockCreateGroupScreenData() {
+export function getMockCreateGroupScreenData(memberName?: string) {
+  const extraMember = [
+    ...mockQuickStartContacts,
+    ...mockFrequentConnections,
+  ].find((contact) => contact.name === memberName);
+  const selectedMembers = extraMember
+    ? [...mockSelectedGroupMembers, extraMember].filter(
+        (member, index, members) =>
+          members.findIndex(({ name }) => name === member.name) === index,
+      )
+    : mockSelectedGroupMembers;
+
   return {
     viewer: mockCurrentViewer,
     categories: mockGroupCategories,
-    selectedMembers: mockSelectedGroupMembers,
+    selectedMembers,
     frequentConnections: mockFrequentConnections,
-    createGroupHref: "/grupos/summer-roadtrip",
   };
 }
 
@@ -267,5 +354,31 @@ export function getMockGroupDetailScreenData(slug: string) {
   return {
     viewer: mockCurrentViewer,
     group,
+  };
+}
+
+export function getMockCreatedGroupDetailScreenData({
+  slug,
+  name,
+  category,
+  members,
+}: {
+  slug: string;
+  name?: string;
+  category?: string;
+  members?: string[];
+}) {
+  if (!name || !category) {
+    return null;
+  }
+
+  return {
+    viewer: mockCurrentViewer,
+    group: buildCreatedGroup({
+      slug,
+      name,
+      category,
+      memberNames: members ?? [],
+    }),
   };
 }

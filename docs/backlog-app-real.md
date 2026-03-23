@@ -89,63 +89,63 @@ Tarefas:
 
 Auth e entrada:
 
-- [ ] Criar a rota e a tela de login.
-- [ ] Criar o fluxo mock de `esqueci minha senha`.
-- [ ] Definir a rota inicial correta entre `/`, `/cadastro` e `/login` no estado atual.
-- [ ] Garantir que cadastro, login e recuperação apontem um para o outro de forma coerente.
-- [ ] Revisar os botões sociais e decidir entre ligar a um fluxo mock explícito ou removê-los temporariamente.
-- [ ] Garantir que pós-login e pós-cadastro levem a uma experiência coerente para usuário novo sem dados.
+- [x] Criar a rota e a tela de login.
+- [x] Criar o fluxo mock de `esqueci minha senha`.
+- [x] Definir a rota inicial correta entre `/`, `/cadastro` e `/login` no estado atual.
+- [x] Garantir que cadastro, login e recuperação apontem um para o outro de forma coerente.
+- [x] Revisar os botões sociais e decidir entre ligar a um fluxo mock explícito ou removê-los temporariamente.
+- [x] Garantir que pós-login e pós-cadastro levem a uma experiência coerente para usuário novo sem dados.
 
 Shell e navegação global:
 
-- [ ] Decidir o comportamento do menu hamburguer no estado atual: abrir navegação real, abrir sheet simples ou remover temporariamente.
-- [ ] Aplicar esse comportamento de menu de forma consistente em dashboard, grupos, relatórios e perfil.
-- [ ] Revisar links quebrados ou rotas ausentes nas telas principais.
-- [ ] Garantir que a navegação inferior reflita corretamente o contexto atual em todas as rotas principais.
-- [ ] Revisar `not-found` e retornos de rota para não empurrarem o usuário para contextos incoerentes.
+- [x] Decidir o comportamento do menu hamburguer no estado atual: abrir navegação real, abrir sheet simples ou remover temporariamente.
+- [x] Aplicar esse comportamento de menu de forma consistente em dashboard, grupos, relatórios e perfil.
+- [x] Revisar links quebrados ou rotas ausentes nas telas principais.
+- [x] Garantir que a navegação inferior reflita corretamente o contexto atual em todas as rotas principais.
+- [x] Revisar `not-found` e retornos de rota para não empurrarem o usuário para contextos incoerentes.
 
 Dashboard e fluxo de chegada:
 
-- [ ] Revisar o dashboard como primeira tela pós-auth para usuário sem grupos e sem atividade.
-- [ ] Remover ou corrigir CTAs secundários sem efeito no dashboard.
-- [ ] Garantir que o CTA principal do dashboard leve ao próximo passo mais lógico do usuário novo.
-- [ ] Revisar métricas e textos que hoje parecem dados “reais” demais para um estado de mock ou onboarding.
+- [x] Revisar o dashboard como primeira tela pós-auth para usuário sem grupos e sem atividade.
+- [x] Remover ou corrigir CTAs secundários sem efeito no dashboard.
+- [x] Garantir que o CTA principal do dashboard leve ao próximo passo mais lógico do usuário novo.
+- [x] Revisar métricas e textos que hoje parecem dados “reais” demais para um estado de mock ou onboarding.
 
 Grupos e membros:
 
-- [ ] Revisar o fluxo de criação de grupo para parecer um fluxo real, mesmo ainda em mock.
-- [ ] Garantir que adicionar participantes tenha affordance coerente e não apenas visual.
-- [ ] Revisar CTAs sem efeito na listagem de grupos.
-- [ ] Revisar CTAs sem efeito no detalhe do grupo.
-- [ ] Definir um fluxo claro para `quitar despesas` no detalhe do grupo, mesmo que ainda seja placeholder navegável e explícito.
-- [ ] Garantir que links de grupo, criação e retorno preservem contexto.
+- [x] Revisar o fluxo de criação de grupo para parecer um fluxo real, mesmo ainda em mock.
+- [x] Garantir que adicionar participantes tenha affordance coerente e não apenas visual.
+- [x] Revisar CTAs sem efeito na listagem de grupos.
+- [x] Revisar CTAs sem efeito no detalhe do grupo.
+- [x] Definir um fluxo claro para `quitar despesas` no detalhe do grupo, mesmo que ainda seja placeholder navegável e explícito.
+- [x] Garantir que links de grupo, criação e retorno preservem contexto.
 
 Despesas:
 
-- [ ] Revisar a tela de nova despesa para remover controles cenográficos ou convertê-los em fluxo mock explícito.
-- [ ] Garantir que salvar despesa e voltar para o grupo comuniquem claramente o resultado da ação.
-- [ ] Revisar affordances como categoria, data, pagador, divisão avançada e edição de split para não prometer comportamento inexistente.
-- [ ] Definir o menor fluxo coerente para `lançar despesa` sem backend real.
+- [x] Revisar a tela de nova despesa para remover controles cenográficos ou convertê-los em fluxo mock explícito.
+- [x] Garantir que salvar despesa e voltar para o grupo comuniquem claramente o resultado da ação.
+- [x] Revisar affordances como categoria, data, pagador, divisão avançada e edição de split para não prometer comportamento inexistente.
+- [x] Definir o menor fluxo coerente para `lançar despesa` sem backend real.
 
 Perfil e conta:
 
-- [ ] Revisar o fluxo de perfil para que `Editar perfil`, `Log out` e preferências tenham comportamento explícito.
-- [ ] Criar fluxo mock mínimo para atualização de cadastro.
-- [ ] Criar fluxo mock mínimo para troca de senha.
-- [ ] Decidir o que fica navegável, o que vira placeholder explícito e o que deve ser removido temporariamente.
+- [x] Revisar o fluxo de perfil para que `Editar perfil`, `Log out` e preferências tenham comportamento explícito.
+- [x] Criar fluxo mock mínimo para atualização de cadastro.
+- [x] Criar fluxo mock mínimo para troca de senha.
+- [x] Decidir o que fica navegável, o que vira placeholder explícito e o que deve ser removido temporariamente.
 
 Linguagem e affordances:
 
-- [ ] Revisar labels como `Live`, `Monthly`, `History`, `Suggestions` e equivalentes para garantir que não pareçam interação quando forem apenas estado visual.
-- [ ] Unificar o idioma e o tom das telas principais.
-- [ ] Converter elementos clicáveis cenográficos em links reais, ações reais ou texto estático, caso a ação ainda não exista.
+- [x] Revisar labels como `Live`, `Monthly`, `History`, `Suggestions` e equivalentes para garantir que não pareçam interação quando forem apenas estado visual.
+- [x] Unificar o idioma e o tom das telas principais.
+- [x] Converter elementos clicáveis cenográficos em links reais, ações reais ou texto estático, caso a ação ainda não exista.
 
 Validação:
 
-- [ ] Validar navegação ponta a ponta nas rotas públicas e privadas mockadas.
-- [ ] Validar a jornada de usuário novo.
-- [ ] Validar a jornada de usuário com grupos existentes.
-- [ ] Validar a jornada mínima de criar grupo, abrir grupo, lançar despesa e iniciar quitação.
+- [x] Validar navegação ponta a ponta nas rotas públicas e privadas mockadas.
+- [x] Validar a jornada de usuário novo.
+- [x] Validar a jornada de usuário com grupos existentes.
+- [x] Validar a jornada mínima de criar grupo, abrir grupo, lançar despesa e iniciar quitação.
 
 Gaps mapeados no estado atual:
 

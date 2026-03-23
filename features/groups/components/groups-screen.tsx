@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Menu, Plus, Wallet } from "lucide-react";
+import { Plus, Wallet } from "lucide-react";
 
+import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
@@ -15,24 +16,25 @@ type GroupsScreenProps = {
   viewer: Viewer;
   groups: Group[];
   quickStartContacts: GroupContact[];
+  createdGroupSlug?: string;
+  createdGroupQuery?: string;
 };
 
 export function GroupsScreen({
   viewer,
   groups,
   quickStartContacts,
+  createdGroupSlug,
+  createdGroupQuery,
 }: GroupsScreenProps) {
   const totalBalance = getGroupsTotalBalance(groups);
+  const hasGroups = groups.length > 0;
 
   return (
     <div className="screen-shell">
       <TopBar
         title="Equitas"
-        leading={
-          <button className="icon-button" type="button" aria-label="Abrir menu">
-            <Menu size={18} />
-          </button>
-        }
+        leading={<AppMenu />}
         trailing={
           <Avatar
             name={viewer.name}
@@ -45,7 +47,7 @@ export function GroupsScreen({
 
       <main className="page-content">
         <section className="hero-copy">
-          <span className="eyebrow-note">Managed circles</span>
+          <span className="eyebrow-note">Círculos ativos</span>
           <h1>Grupos</h1>
           <p>
             Gerencie despesas compartilhadas, organize membros e acelere novos
@@ -54,15 +56,13 @@ export function GroupsScreen({
         </section>
 
         <section className="hero-card">
-          <span className="section-label">Net group balance</span>
+          <span className="section-label">Saldo consolidado</span>
           <h2 className="hero-amount">{formatCurrency(totalBalance)}</h2>
           <div className="stats-row">
             <span
-              className={`stat-chip ${
-                groups.length > 0 ? "stat-chip--positive" : ""
-              }`}
+              className={`stat-chip ${hasGroups ? "stat-chip--positive" : ""}`}
             >
-              {groups.length > 0 ? "+4.2%" : "Sem historico"}
+              {hasGroups ? "+4.2%" : "Sem histórico"}
             </span>
             <span className="stat-chip">{groups.length} grupos</span>
           </div>
@@ -70,7 +70,7 @@ export function GroupsScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Active circles</h2>
+            <h2>Grupos ativos</h2>
             <Link href="/grupos/criar" className="ghost-link">
               Criar novo
             </Link>
@@ -80,7 +80,11 @@ export function GroupsScreen({
               {groups.map((group) => (
                 <Link
                   key={group.id}
-                  href={`/grupos/${group.slug}`}
+                  href={
+                    createdGroupSlug === group.slug && createdGroupQuery
+                      ? `/grupos/${group.slug}?${createdGroupQuery}`
+                      : `/grupos/${group.slug}`
+                  }
                   className="list-card"
                 >
                   <Avatar
@@ -96,7 +100,7 @@ export function GroupsScreen({
                     </p>
                   </div>
                   <div className="list-card__value">
-                    <span>{group.balance >= 0 ? "Open" : "Pending"}</span>
+                    <span>{group.balance >= 0 ? "Aberto" : "Pendente"}</span>
                     <strong
                       className={
                         group.balance >= 0 ? "money-positive" : "money-negative"
@@ -121,14 +125,18 @@ export function GroupsScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Quick start</h2>
-            <button className="ghost-link" type="button">
-              Sugestões
-            </button>
+            <h2>Começar rápido</h2>
+            <Link href="/grupos/criar" className="ghost-link">
+              Abrir criador
+            </Link>
           </div>
           <div className="quick-grid">
             {quickStartContacts.map((contact) => (
-              <article key={contact.name} className="quick-card">
+              <Link
+                key={contact.name}
+                href={`/grupos/criar?member=${encodeURIComponent(contact.name)}`}
+                className="quick-card"
+              >
                 <Avatar
                   name={contact.name}
                   initials={contact.initials}
@@ -137,7 +145,7 @@ export function GroupsScreen({
                 />
                 <strong>{contact.name}</strong>
                 <p className="list-card__meta">Começar com {contact.name}</p>
-              </article>
+              </Link>
             ))}
             <Link
               href="/grupos/criar"
@@ -154,12 +162,13 @@ export function GroupsScreen({
 
         <section className="report-card">
           <div className="section-heading">
-            <h2>Pulse por carteira</h2>
+            <h2>{hasGroups ? "Leitura por carteira" : "Próximo passo"}</h2>
             <Wallet size={18} color="var(--primary-bright)" />
           </div>
           <p className="supporting-copy">
-            Os grupos de moradia estão estáveis. Viagens e eventos continuam
-            puxando crescimento no volume dividido.
+            {hasGroups
+              ? "Os grupos de moradia estão estáveis. Viagens e eventos continuam puxando crescimento no volume dividido."
+              : "Assim que o primeiro grupo nascer, este bloco passa a resumir ritmo, categorias e sinais de atenção da carteira compartilhada."}
           </p>
         </section>
       </main>

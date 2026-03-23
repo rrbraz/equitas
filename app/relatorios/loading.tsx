@@ -5,7 +5,7 @@ export default function Loading() {
     <PageLoadingState
       eyebrow="Montando relatórios"
       title="Calculando ritmo e concentração"
-      description="Carregando evolução mensal, categorias e saúde de settlement dos seus grupos."
+      description="Carregando evolução mensal, categorias e saúde de quitação dos seus grupos."
     />
   );
 }

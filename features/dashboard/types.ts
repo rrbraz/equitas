@@ -38,4 +38,8 @@ export type DashboardScreenData = {
   recentActivities: Activity[];
   expenseHref: string;
   expenseLabel: string;
+  createdGroupSlug?: string;
+  createdGroupQuery?: string;
+  flashMessage?: string;
+  flashTone?: "success" | "info";
 };

@@ -24,21 +24,28 @@ const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0"];
 
 type ExpenseComposerProps = {
   groupSlug: string;
+  groupQuery?: string;
   actionErrorMessage?: string;
 };
 
 export function ExpenseComposer({
   groupSlug,
+  groupQuery,
   actionErrorMessage,
 }: ExpenseComposerProps) {
   const router = useRouter();
   const [amount, setAmount] = useState("124.50");
   const [description, setDescription] = useState("Jantar no Blue Lagoon");
+  const [selectedDate, setSelectedDate] = useState("Hoje");
+  const [selectedCategory, setSelectedCategory] = useState("Refeição");
+  const [splitMode, setSplitMode] = useState<"equal" | "manual">("equal");
+  const [payer, setPayer] = useState<"you" | "group">("you");
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
   const [isPending, startTransition] = useTransition();
-  const groupHref = `/grupos/${groupSlug}`;
+  const detailParams = new URLSearchParams(groupQuery ?? "");
+  const groupHref = `/grupos/${groupSlug}${groupQuery ? `?${groupQuery}` : ""}`;
 
   const numericAmount = Number(amount || 0);
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
@@ -81,8 +88,9 @@ export function ExpenseComposer({
     }
 
     setSubmitErrorMessage(null);
+    detailParams.set("expenseSaved", "1");
     startTransition(() => {
-      router.push(groupHref);
+      router.push(`/grupos/${groupSlug}?${detailParams.toString()}`);
     });
   }
 
@@ -105,9 +113,10 @@ export function ExpenseComposer({
             >
               {isPending ? "Salvando..." : "Salvar"}
             </button>
-            <button className="icon-button" type="button" aria-label="Ajustes">
-              <Settings2 size={18} />
-            </button>
+            <span className="top-bar__eyebrow">
+              <Settings2 size={16} />
+              Mock
+            </span>
           </div>
         }
       />
@@ -144,17 +153,35 @@ export function ExpenseComposer({
           </label>
 
           <div className="split-grid">
-            <button className="selector-card" type="button">
+            <button
+              className="selector-card"
+              type="button"
+              onClick={() => {
+                setSelectedDate((current) =>
+                  current === "Hoje" ? "Ontem" : "Hoje",
+                );
+                setSubmitErrorMessage(null);
+              }}
+            >
               <span className="selector-card__copy">
                 <CalendarDays size={16} />
-                Hoje
+                {selectedDate}
               </span>
               <ChevronDown size={16} />
             </button>
-            <button className="selector-card" type="button">
+            <button
+              className="selector-card"
+              type="button"
+              onClick={() => {
+                setSelectedCategory((current) =>
+                  current === "Refeição" ? "Transporte" : "Refeição",
+                );
+                setSubmitErrorMessage(null);
+              }}
+            >
               <span className="selector-card__copy">
                 <PencilLine size={16} />
-                Dining
+                {selectedCategory}
               </span>
               <ChevronDown size={16} />
             </button>
@@ -166,8 +193,19 @@ export function ExpenseComposer({
             <div>
               <h2>Detalhes da divisão</h2>
             </div>
-            <button className="ghost-link ghost-link--compact" type="button">
-              Divisão avançada
+            <button
+              className="ghost-link ghost-link--compact"
+              type="button"
+              onClick={() => {
+                setSplitMode((current) =>
+                  current === "equal" ? "manual" : "equal",
+                );
+                setSubmitErrorMessage(null);
+              }}
+            >
+              {splitMode === "equal"
+                ? "Ativar divisão manual"
+                : "Usar divisão igual"}
             </button>
           </div>
 
@@ -177,13 +215,21 @@ export function ExpenseComposer({
               <div className="inline-card">
                 <div className="inline-card__avatar">JV</div>
                 <div>
-                  <strong>Você</strong>
-                  <p>Valor integral</p>
+                  <strong>{payer === "you" ? "Você" : "Grupo"}</strong>
+                  <p>
+                    {payer === "you" ? "Valor integral" : "Reembolso coletivo"}
+                  </p>
                 </div>
                 <button
                   className="icon-button icon-button--soft"
                   type="button"
                   aria-label="Trocar pagador"
+                  onClick={() => {
+                    setPayer((current) =>
+                      current === "you" ? "group" : "you",
+                    );
+                    setSubmitErrorMessage(null);
+                  }}
                 >
                   <ArrowRightLeft size={16} />
                 </button>
@@ -197,13 +243,27 @@ export function ExpenseComposer({
                   <CircleEqual size={18} />
                 </div>
                 <div>
-                  <strong>Igual para todos</strong>
-                  <p>4 participantes</p>
+                  <strong>
+                    {splitMode === "equal"
+                      ? "Igual para todos"
+                      : "Divisão manual mock"}
+                  </strong>
+                  <p>
+                    {splitMode === "equal"
+                      ? "4 participantes"
+                      : "2 cotas ajustadas manualmente"}
+                  </p>
                 </div>
                 <button
                   className="icon-button icon-button--soft"
                   type="button"
                   aria-label="Editar divisão"
+                  onClick={() => {
+                    setSplitMode((current) =>
+                      current === "equal" ? "manual" : "equal",
+                    );
+                    setSubmitErrorMessage(null);
+                  }}
                 >
                   <PencilLine size={16} />
                 </button>

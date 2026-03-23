@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   BarChart3,
   LayoutDashboard,
@@ -40,6 +40,16 @@ const items = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const preservedParams = new URLSearchParams();
+
+  ["scenario", "created", "name", "category", "members"].forEach((key) => {
+    const value = searchParams.get(key);
+
+    if (value) {
+      preservedParams.set(key, value);
+    }
+  });
 
   return (
     <nav className="bottom-nav" aria-label="Navegação principal">
@@ -48,11 +58,14 @@ export function BottomNav() {
           (match) => pathname === match || pathname.startsWith(`${match}/`),
         );
         const Icon = item.icon;
+        const itemHref = preservedParams.toString()
+          ? `${item.href}?${preservedParams.toString()}`
+          : item.href;
 
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={itemHref}
             className={cn("bottom-nav__link", active && "is-active")}
           >
             <Icon size={18} strokeWidth={active ? 2.4 : 2} />

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, BanknoteArrowUp, Plus, Settings2 } from "lucide-react";
+import { ArrowLeft, BanknoteArrowUp, Plus } from "lucide-react";
 
+import { ActionFeedback } from "@/components/action-feedback";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
@@ -12,56 +13,75 @@ import type { Viewer } from "@/features/viewer/types";
 type GroupDetailScreenProps = {
   viewer: Viewer;
   group: Group;
+  flashMessage?: string;
+  groupQuery?: string;
 };
 
-export function GroupDetailScreen({ viewer, group }: GroupDetailScreenProps) {
+export function GroupDetailScreen({
+  viewer,
+  group,
+  flashMessage,
+  groupQuery,
+}: GroupDetailScreenProps) {
+  const querySuffix = groupQuery ? `?${groupQuery}` : "";
+
   return (
     <div className="screen-shell">
       <TopBar
         title={group.name}
         leading={
-          <Link href="/grupos" className="icon-button" aria-label="Voltar">
+          <Link
+            href={groupQuery ? `/grupos?${groupQuery}` : "/grupos"}
+            className="icon-button"
+            aria-label="Voltar"
+          >
             <ArrowLeft size={18} />
           </Link>
         }
         trailing={
-          <div className="top-bar__action-group">
-            <Avatar
-              name={viewer.name}
-              initials={viewer.initials}
-              tone="amber"
-              size="sm"
-            />
-            <button className="icon-button" type="button" aria-label="Ajustes">
-              <Settings2 size={18} />
-            </button>
-          </div>
+          <Avatar
+            name={viewer.name}
+            initials={viewer.initials}
+            tone="amber"
+            size="sm"
+          />
         }
       />
 
       <main className="page-content">
+        {flashMessage ? (
+          <ActionFeedback
+            tone="success"
+            title="Fluxo concluído"
+            message={flashMessage}
+          />
+        ) : null}
+
         <section className="hero-card">
-          <span className="section-label">Total group spend</span>
+          <span className="section-label">Total do grupo</span>
           <h1 className="hero-amount">{formatCurrency(group.totalSpend)}</h1>
           <div className="button-row">
-            <button className="secondary-button" type="button">
-              <BanknoteArrowUp size={18} />
-              Settle up
-            </button>
             <Link
-              href={`/grupos/${group.slug}/despesas/nova`}
+              href={`/grupos/${group.slug}/quitar${querySuffix}`}
+              className="secondary-button"
+            >
+              <BanknoteArrowUp size={18} />
+              Quitar
+            </Link>
+            <Link
+              href={`/grupos/${group.slug}/despesas/nova${querySuffix}`}
               className="secondary-button"
             >
               <Plus size={18} />
-              Add expense
+              Adicionar despesa
             </Link>
           </div>
         </section>
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Member balances</h2>
-            <span className="ghost-link">Live</span>
+            <h2>Saldos por membro</h2>
+            <span className="section-label">Momento atual</span>
           </div>
           <div className="list-stack">
             {group.members.map((member) => (
@@ -79,10 +99,10 @@ export function GroupDetailScreen({ viewer, group }: GroupDetailScreenProps) {
                 <div className="list-card__value">
                   <span>
                     {member.balance > 0
-                      ? "You are owed"
+                      ? "A receber"
                       : member.balance < 0
-                        ? "Owes you"
-                        : "No balance"}
+                        ? "A pagar"
+                        : "Sem saldo"}
                   </span>
                   <strong
                     className={
@@ -99,9 +119,9 @@ export function GroupDetailScreen({ viewer, group }: GroupDetailScreenProps) {
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Recent expenses</h2>
+            <h2>Despesas recentes</h2>
             <Link href="/relatorios" className="ghost-link">
-              View all
+              Ver relatórios
             </Link>
           </div>
           {group.expenses.length > 0 ? (
@@ -128,7 +148,7 @@ export function GroupDetailScreen({ viewer, group }: GroupDetailScreenProps) {
               eyebrow="Sem despesas ainda"
               title="Este grupo ainda não começou a dividir gastos"
               description="Adicione a primeira despesa para abrir a timeline e começar a acompanhar os saldos dos participantes."
-              actionHref={`/grupos/${group.slug}/despesas/nova`}
+              actionHref={`/grupos/${group.slug}/despesas/nova${querySuffix}`}
               actionLabel="Adicionar despesa"
             />
           )}

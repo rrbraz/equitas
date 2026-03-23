@@ -17,11 +17,8 @@ export default function NotFound() {
               neste ambiente.
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="primary-button primary-button--full"
-          >
-            Voltar ao dashboard
+          <Link href="/" className="primary-button primary-button--full">
+            Voltar para entrada
           </Link>
         </section>
       </main>
