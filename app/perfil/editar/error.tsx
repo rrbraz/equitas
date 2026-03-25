@@ -3,6 +3,7 @@
 import { RouteErrorScreen } from "@/components/route-error-screen";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,6 +15,7 @@ export default function Error({
       description="O formulário falhou ao carregar. Tente novamente antes de salvar suas alterações."
       backHref="/perfil"
       backLabel="Voltar ao perfil"
+      error={error}
       reset={reset}
     />
   );

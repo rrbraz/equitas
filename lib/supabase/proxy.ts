@@ -2,9 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
-import { logServerError } from "@/lib/server/logger";
+import { logServerInfo } from "@/lib/server/logger";
 import { getPublicSupabaseEnv, hasPublicSupabaseEnv } from "@/lib/supabase/env";
-import { ensureProfileForUser } from "@/lib/supabase/profile";
 
 const publicRoutes = new Set([
   "/",
@@ -32,7 +31,16 @@ function withCopiedCookies(source: NextResponse, target: NextResponse) {
   return target;
 }
 
+function isLoggableRoute(pathname: string) {
+  return (
+    !pathname.startsWith("/_next/") &&
+    !pathname.startsWith("/favicon") &&
+    !/\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$/.test(pathname)
+  );
+}
+
 export async function updateSession(request: NextRequest) {
+  const requestStart = Date.now();
   let response = NextResponse.next({
     request,
   });
@@ -71,16 +79,6 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    try {
-      await ensureProfileForUser(supabase, user);
-    } catch (error) {
-      logServerError("sync_profile_from_session_failed", error, {
-        userId: user.id,
-      });
-    }
-  }
-
   if (!user && !isPublicRoute(pathname)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
@@ -105,6 +103,15 @@ export async function updateSession(request: NextRequest) {
   }
 
   response.headers.set("Cache-Control", "private, no-store");
+
+  if (isLoggableRoute(pathname)) {
+    logServerInfo("http_request", pathname, {
+      method: request.method,
+      pathname,
+      authenticated: !!user,
+      duration_ms: Date.now() - requestStart,
+    });
+  }
 
   return response;
 }

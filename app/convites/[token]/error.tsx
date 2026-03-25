@@ -3,6 +3,7 @@
 import { RouteErrorScreen } from "@/components/route-error-screen";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,6 +15,7 @@ export default function Error({
       description="Os dados do convite falharam ao carregar. Tente novamente antes de aceitar ou recusar."
       backHref="/grupos"
       backLabel="Voltar para grupos"
+      error={error}
       reset={reset}
     />
   );

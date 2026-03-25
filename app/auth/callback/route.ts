@@ -2,10 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
+import { rateLimit } from "@/lib/server/rate-limit";
 import { getPublicSupabaseEnv, hasPublicSupabaseEnv } from "@/lib/supabase/env";
 import { ensureProfileForUser } from "@/lib/supabase/profile";
 
 export async function GET(request: NextRequest) {
+  const rateLimitResponse = rateLimit(request);
+
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   const nextPath = getSafeNextPath(
     request.nextUrl.searchParams.get("next"),
     "/dashboard",

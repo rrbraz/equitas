@@ -3,6 +3,7 @@
 import { RouteErrorScreen } from "@/components/route-error-screen";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,6 +15,7 @@ export default function Error({
       description="Os dados do perfil falharam ao carregar. Tente novamente para recuperar suas informações."
       backHref="/dashboard"
       backLabel="Voltar ao dashboard"
+      error={error}
       reset={reset}
     />
   );

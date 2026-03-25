@@ -3,6 +3,7 @@
 import { RouteErrorScreen } from "@/components/route-error-screen";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,6 +15,7 @@ export default function Error({
       description="A listagem falhou ao carregar. Tente novamente antes de criar ou abrir um grupo."
       backHref="/dashboard"
       backLabel="Voltar ao dashboard"
+      error={error}
       reset={reset}
     />
   );

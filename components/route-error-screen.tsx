@@ -1,14 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/button";
+import { reportClientError } from "@/lib/client/report-error";
 
 type RouteErrorScreenProps = {
   title: string;
   description: string;
   reset: () => void;
+  error?: Error & { digest?: string };
   backHref?: string;
   backLabel?: string;
 };
@@ -17,9 +20,17 @@ export function RouteErrorScreen({
   title,
   description,
   reset,
+  error,
   backHref = "/dashboard",
   backLabel = "Voltar ao app",
 }: RouteErrorScreenProps) {
+  useEffect(() => {
+    if (!error) return;
+    reportClientError(error, {
+      digest: error.digest ?? "",
+    });
+  }, [error]);
+
   return (
     <div className="screen-shell">
       <main className="page-content page-content--centered">

@@ -3,6 +3,7 @@
 import { RouteErrorScreen } from "@/components/route-error-screen";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,6 +15,7 @@ export default function Error({
       description="Os dados do grupo falharam ao carregar. Tente novamente antes de seguir com novas despesas."
       backHref="/grupos"
       backLabel="Voltar para grupos"
+      error={error}
       reset={reset}
     />
   );

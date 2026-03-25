@@ -51,6 +51,10 @@ export async function createGroupInvite(
     };
   }
 
+  const expiresAt = new Date(
+    Date.now() + 7 * 24 * 60 * 60 * 1000,
+  ).toISOString();
+
   const { data, error } = await supabase
     .from("group_invites")
     .insert({
@@ -58,6 +62,7 @@ export async function createGroupInvite(
       invited_email: invitedEmail,
       role: "member",
       invited_by_profile_id: user.id,
+      expires_at: expiresAt,
     })
     .select("token")
     .single<{ token: string }>();
