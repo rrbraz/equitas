@@ -6,7 +6,10 @@ import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { ActionFeedback } from "@/components/action-feedback";
+import { Button } from "@/components/button";
 import { BottomNav } from "@/components/bottom-nav";
+import { PageIntro } from "@/components/page-intro";
+import { updateCurrentProfile } from "@/features/profile/actions/update-current-profile";
 import { TopBar } from "@/components/top-bar";
 import type { ProfileScreenData } from "@/features/profile/types";
 
@@ -29,18 +32,28 @@ export function EditProfileScreen({
   const [isPending, startTransition] = useTransition();
 
   function handleSubmit() {
-    if (!name.trim()) {
-      setSubmitErrorMessage("Defina um nome para salvar o perfil.");
+    if (name.trim().length < 2) {
+      setSubmitErrorMessage("Defina um nome com pelo menos 2 caracteres.");
       return;
     }
 
-    if (!city.trim()) {
-      setSubmitErrorMessage("Defina uma cidade para completar o perfil.");
+    if (city.trim().length < 2) {
+      setSubmitErrorMessage("Defina uma cidade com pelo menos 2 caracteres.");
       return;
     }
 
     setSubmitErrorMessage(null);
-    startTransition(() => {
+    startTransition(async () => {
+      const result = await updateCurrentProfile({
+        fullName: name,
+        city,
+      });
+
+      if (!result.ok) {
+        setSubmitErrorMessage(result.message);
+        return;
+      }
+
       router.push(
         scenario === "new"
           ? "/perfil?updated=1&scenario=new"
@@ -61,10 +74,16 @@ export function EditProfileScreen({
       />
 
       <main className="page-content">
+        <PageIntro
+          eyebrow="Conta real"
+          title="Editar perfil"
+          description="Atualize os dados básicos que alimentam sua identidade dentro do app e dos grupos."
+        />
+
         <ActionFeedback
           tone="info"
-          title="Fluxo mock"
-          message="Os dados ainda não persistem, mas esta etapa já valida edição, retorno e feedback do perfil."
+          title="Perfil real"
+          message="As alterações são salvas no profile vinculado à sua sessão do Supabase."
         />
 
         {submitErrorMessage ? (
@@ -87,6 +106,15 @@ export function EditProfileScreen({
             />
           </label>
           <label>
+            <span className="field-label">Email</span>
+            <input
+              className="input-plain"
+              value={viewer.email}
+              readOnly
+              aria-readonly="true"
+            />
+          </label>
+          <label>
             <span className="field-label">Cidade</span>
             <input
               className="input-plain"
@@ -99,16 +127,11 @@ export function EditProfileScreen({
           </label>
         </section>
 
-        <button
-          type="button"
-          className="primary-button primary-button--full"
-          onClick={handleSubmit}
-          disabled={isPending}
-        >
+        <Button fullWidth onClick={handleSubmit} disabled={isPending}>
           <Save size={18} />
           {isPending ? "Salvando..." : "Salvar perfil"}
           <ArrowRight size={18} />
-        </button>
+        </Button>
       </main>
 
       <BottomNav />

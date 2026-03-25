@@ -14,6 +14,11 @@ import { ActionFeedback } from "@/components/action-feedback";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
+import { createSettlement } from "@/features/groups/actions/create-settlement";
+import {
+  parseCurrencyInput,
+  sanitizeCurrencyInput,
+} from "@/features/expenses/lib/split-calculations";
 import { TopBar } from "@/components/top-bar";
 import type { Group } from "@/features/groups/types";
 import type { Viewer } from "@/features/viewer/types";
@@ -24,22 +29,6 @@ type GroupSettlementScreenProps = {
   group: Group;
   groupQuery?: string;
 };
-
-function sanitizeCurrencyInput(value: string) {
-  const normalized = value.replace(",", ".").replace(/[^\d.]/g, "");
-  const [integerPart = "", ...decimalParts] = normalized.split(".");
-  const decimalPart = decimalParts.join("").slice(0, 2);
-
-  if (!integerPart && normalized.startsWith(".")) {
-    return `0.${decimalPart}`;
-  }
-
-  return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
-}
-
-function parseCurrencyInput(value: string) {
-  return Number(sanitizeCurrencyInput(value) || 0);
-}
 
 function getSuggestedTransferAmount(
   payerBalance: number | undefined,
@@ -66,16 +55,22 @@ export function GroupSettlementScreen({
   );
   const debtors = group.members.filter((member) => member.balance < 0);
   const creditors = group.members.filter((member) => member.balance > 0);
-  const [payer, setPayer] = useState(debtors[0]?.member ?? "");
-  const [receiver, setReceiver] = useState(creditors[0]?.member ?? "");
+  const [payerProfileId, setPayerProfileId] = useState(
+    debtors[0]?.profileId ?? "",
+  );
+  const [receiverProfileId, setReceiverProfileId] = useState(
+    creditors[0]?.profileId ?? "",
+  );
   const [amount, setAmount] = useState(() =>
     getSuggestedTransferAmount(debtors[0]?.balance, creditors[0]?.balance),
   );
   const detailParams = new URLSearchParams(groupQuery ?? "");
 
-  const selectedPayer = debtors.find((member) => member.member === payer);
+  const selectedPayer = debtors.find(
+    (member) => member.profileId === payerProfileId,
+  );
   const selectedReceiver = creditors.find(
-    (member) => member.member === receiver,
+    (member) => member.profileId === receiverProfileId,
   );
   const numericAmount = parseCurrencyInput(amount);
   const maxTransferAmount =
@@ -102,13 +97,23 @@ export function GroupSettlementScreen({
     }
 
     setSubmitErrorMessage(null);
-    detailParams.set("settled", "1");
-    detailParams.set("transferPayer", selectedPayer.member);
-    detailParams.set("transferReceiver", selectedReceiver.member);
-    detailParams.set("transferAmount", numericAmount.toFixed(2));
-    const nextQuery = detailParams.toString();
+    startTransition(async () => {
+      const result = await createSettlement({
+        groupId: group.id,
+        groupSlug: group.slug,
+        payerProfileId: selectedPayer.profileId ?? "",
+        receiverProfileId: selectedReceiver.profileId ?? "",
+        amount: numericAmount,
+      });
 
-    startTransition(() => {
+      if (!result.ok) {
+        setSubmitErrorMessage(result.message);
+        return;
+      }
+
+      detailParams.set("settlementSaved", "1");
+      const nextQuery = detailParams.toString();
+
       router.push(
         nextQuery
           ? `/grupos/${group.slug}?${nextQuery}`
@@ -130,17 +135,26 @@ export function GroupSettlementScreen({
             <ArrowLeft size={18} />
           </Link>
         }
-        trailing={<span className="top-bar__eyebrow">{viewer.initials}</span>}
+        trailing={
+          <span className="top-bar__eyebrow top-bar__eyebrow--badge">
+            {viewer.initials}
+          </span>
+        }
       />
 
       <main className="page-content">
-        <section className="hero-copy">
-          <span className="eyebrow-note">{group.name}</span>
+        <section className="hero-copy hero-copy--card">
+          <span className="eyebrow-note">Fluxo de quitação</span>
           <h1>Quite o saldo com uma transferência entre membros.</h1>
           <p>
             Escolha quem paga, quem recebe e registre o valor que sai do grupo
             pendente.
           </p>
+          <div className="page-meta-pills">
+            <span className="meta-pill">{group.name}</span>
+            <span className="meta-pill">{debtors.length} devedor(es)</span>
+            <span className="meta-pill">{creditors.length} credor(es)</span>
+          </div>
         </section>
 
         {submitErrorMessage ? (
@@ -160,7 +174,7 @@ export function GroupSettlementScreen({
           />
         ) : (
           <>
-            <section className="stack-column">
+            <section className="surface-section section-stack">
               <div className="section-heading">
                 <div>
                   <h2>Quem transfere</h2>
@@ -172,15 +186,15 @@ export function GroupSettlementScreen({
 
               <div className="stack-column">
                 {debtors.map((member) => {
-                  const isSelected = payer === member.member;
+                  const isSelected = payerProfileId === member.profileId;
 
                   return (
                     <button
-                      key={member.member}
+                      key={member.profileId ?? member.member}
                       className={`member-choice${isSelected ? " is-active" : ""}`}
                       type="button"
                       onClick={() => {
-                        setPayer(member.member);
+                        setPayerProfileId(member.profileId ?? "");
                         setAmount(
                           getSuggestedTransferAmount(
                             member.balance,
@@ -209,7 +223,7 @@ export function GroupSettlementScreen({
               </div>
             </section>
 
-            <section className="stack-column">
+            <section className="surface-section section-stack">
               <div className="section-heading">
                 <div>
                   <h2>Quem recebe</h2>
@@ -221,15 +235,15 @@ export function GroupSettlementScreen({
 
               <div className="stack-column">
                 {creditors.map((member) => {
-                  const isSelected = receiver === member.member;
+                  const isSelected = receiverProfileId === member.profileId;
 
                   return (
                     <button
-                      key={member.member}
+                      key={member.profileId ?? member.member}
                       className={`member-choice${isSelected ? " is-active" : ""}`}
                       type="button"
                       onClick={() => {
-                        setReceiver(member.member);
+                        setReceiverProfileId(member.profileId ?? "");
                         setAmount(
                           getSuggestedTransferAmount(
                             selectedPayer?.balance,
@@ -258,7 +272,7 @@ export function GroupSettlementScreen({
               </div>
             </section>
 
-            <section className="surface-card stack-column">
+            <section className="surface-section section-stack">
               <span className="section-label">Valor da transferência</span>
               <label className="currency-field">
                 <span className="currency-field__prefix">R$</span>
@@ -279,7 +293,7 @@ export function GroupSettlementScreen({
               </p>
             </section>
 
-            <section className="surface-card stack-column">
+            <section className="surface-section section-stack">
               <div className="inline-card">
                 <div className="inline-card__avatar inline-card__avatar--soft">
                   <ArrowRightLeft size={18} />
@@ -317,7 +331,9 @@ export function GroupSettlementScreen({
               disabled={isPending}
             >
               <BadgeCheck size={18} />
-              {isPending ? "Registrando..." : "Registrar transferência mock"}
+              {isPending
+                ? "Registrando..."
+                : `Registrar transferência - ${formatCurrency(numericAmount)}`}
               <ArrowRight size={18} />
             </button>
           </>

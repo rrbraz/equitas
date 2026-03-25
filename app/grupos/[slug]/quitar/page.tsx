@@ -1,10 +1,7 @@
-import { notFound } from "next/navigation";
-
 import { GroupSettlementScreen } from "@/features/groups/components/group-settlement-screen";
-import {
-  getMockCreatedGroupDetailScreenData,
-  getMockGroupDetailScreenData,
-} from "@/features/groups/data/mock-groups";
+import { getGroupDetailScreenData } from "@/features/groups/data/get-group-detail-screen-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function QuitarGrupoPage({
   params,
@@ -13,40 +10,27 @@ export default async function QuitarGrupoPage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{
     created?: string;
-    name?: string;
-    category?: string;
-    members?: string;
+    joined?: string;
+    inviteCount?: string;
+    inviteWarning?: string;
   }>;
 }) {
   const { slug } = await params;
   const query = await searchParams;
-  const screenData =
-    getMockGroupDetailScreenData(slug) ??
-    (query.created === "1"
-      ? getMockCreatedGroupDetailScreenData({
-          slug,
-          name: query.name,
-          category: query.category,
-          members: query.members?.split("|").filter(Boolean),
-        })
-      : null);
-
-  if (!screenData) {
-    notFound();
-  }
+  const screenData = await getGroupDetailScreenData(slug);
 
   const groupQuery = new URLSearchParams();
   if (query.created === "1") {
     groupQuery.set("created", "1");
   }
-  if (query.name) {
-    groupQuery.set("name", query.name);
+  if (query.joined === "1") {
+    groupQuery.set("joined", "1");
   }
-  if (query.category) {
-    groupQuery.set("category", query.category);
+  if (query.inviteCount) {
+    groupQuery.set("inviteCount", query.inviteCount);
   }
-  if (query.members) {
-    groupQuery.set("members", query.members);
+  if (query.inviteWarning === "1") {
+    groupQuery.set("inviteWarning", "1");
   }
 
   return (

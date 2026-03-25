@@ -32,6 +32,7 @@ export function Avatar({
   return (
     <div
       className={cn("avatar", toneClasses[tone], sizeClasses[size])}
+      role="img"
       aria-label={name}
       title={name}
     >
@@ -41,7 +42,7 @@ export function Avatar({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={name} className="avatar__image" />
       ) : (
-        <span>{initials}</span>
+        <span aria-hidden="true">{initials}</span>
       )}
     </div>
   );

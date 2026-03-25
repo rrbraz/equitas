@@ -9,7 +9,8 @@ Validar a H6 com cenários mínimos antes de conectar os fluxos reais do app.
 1. Suba o stack local com `npm run supabase:start`.
 2. Se o banco local for anterior à H5/H6, rode `npm run supabase:db:reset`.
 3. Crie pelo menos dois usuários no Supabase Studio em `Authentication > Users`.
-4. Para cada usuário, crie o `profile` com o mesmo `id` em `public.profiles`.
+4. Faça login no app com cada usuário ao menos uma vez para o `profile` ser
+   sincronizado automaticamente em `public.profiles`.
 5. Monte um grupo de teste:
    - crie o grupo do usuário A via RPC `create_group(...)`
    - confirme que o owner foi inserido em `group_members`

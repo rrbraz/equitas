@@ -13,7 +13,8 @@ export function PageLoadingState({
 }: PageLoadingStateProps) {
   return (
     <div className="screen-shell">
-      <main className="page-content page-content--loading">
+      <main className="page-content page-content--loading" aria-busy="true">
+        <span className="sr-only">Carregando...</span>
         <section className="state-card state-card--loading">
           <span className="section-label">{eyebrow}</span>
           <div className="state-card__copy">

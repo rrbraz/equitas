@@ -15,6 +15,7 @@ import { useMemo, useState, useTransition } from "react";
 import { ActionFeedback } from "@/components/action-feedback";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { createGroup } from "@/features/groups/actions/create-group";
 import { TopBar } from "@/components/top-bar";
 import type { GroupContact } from "@/features/groups/types";
 import type { Viewer } from "@/features/viewer/types";
@@ -35,7 +36,8 @@ export function CreateGroupScreen({
   actionErrorMessage,
 }: CreateGroupScreenProps) {
   const router = useRouter();
-  const [groupName, setGroupName] = useState("Roadtrip de Verao");
+  const [groupName, setGroupName] = useState("");
+  const [description, setDescription] = useState("");
   const [activeCategory, setActiveCategory] = useState(
     categories[0] ?? "Outro",
   );
@@ -74,35 +76,41 @@ export function CreateGroupScreen({
   );
 
   function handleSubmit() {
-    if (!groupName.trim()) {
+    if (groupName.trim().length < 3) {
       setSubmitErrorMessage(
-        "Defina um nome claro para o grupo antes de criar.",
+        "Defina um nome claro com pelo menos 3 caracteres.",
       );
       return;
     }
 
-    if (selectedMembersState.length === 0) {
-      setSubmitErrorMessage(
-        "Adicione pelo menos um participante para iniciar o grupo.",
-      );
+    if (description.trim().length > 240) {
+      setSubmitErrorMessage("A descrição pode ter no máximo 240 caracteres.");
       return;
     }
-
-    const slug = groupName
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    const params = new URLSearchParams({
-      created: "1",
-      name: groupName.trim(),
-      category: activeCategory,
-      members: selectedMembersState.map((member) => member.name).join("|"),
-    });
 
     setSubmitErrorMessage(null);
-    startTransition(() => {
-      router.push(`/grupos/${slug || "novo-grupo"}?${params.toString()}`);
+    startTransition(async () => {
+      const result = await createGroup({
+        name: groupName,
+        category: activeCategory,
+        description,
+        inviteEmails: selectedMembersState.map((member) => member.name),
+      });
+
+      if (!result.ok) {
+        setSubmitErrorMessage(result.message);
+        return;
+      }
+
+      const params = new URLSearchParams({
+        created: "1",
+        inviteCount: String(result.inviteCount),
+      });
+      if (result.inviteWarning) {
+        params.set("inviteWarning", "1");
+      }
+
+      router.push(`/grupos/${result.slug}?${params.toString()}`);
     });
   }
 
@@ -148,6 +156,7 @@ export function CreateGroupScreen({
             initials={viewer.initials}
             tone="amber"
             size="sm"
+            src={viewer.avatarUrl ?? undefined}
           />
         }
       />
@@ -164,8 +173,9 @@ export function CreateGroupScreen({
           <span className="eyebrow-note">Novo grupo</span>
           <h1>Crie um grupo pronto para dividir gastos.</h1>
           <p>
-            Defina nome, categoria e adicione os membros frequentes em um fluxo
-            enxuto.
+            Defina nome, categoria e a descrição inicial. Convites por email já
+            podem sair daqui; gestão completa de membros entra nas próximas
+            histórias.
           </p>
         </section>
 
@@ -175,8 +185,22 @@ export function CreateGroupScreen({
             <input
               className="input-plain"
               value={groupName}
+              placeholder="Ex.: Viagem Bahia 2026"
               onChange={(event) => {
                 setGroupName(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
+            />
+          </label>
+          <label>
+            <span className="field-label">Descrição</span>
+            <textarea
+              className="input-plain"
+              value={description}
+              placeholder="Contexto rápido para os membros entenderem o grupo."
+              rows={4}
+              onChange={(event) => {
+                setDescription(event.target.value);
                 setSubmitErrorMessage(null);
               }}
             />
@@ -205,9 +229,9 @@ export function CreateGroupScreen({
 
         <section className="stack-column">
           <div className="section-heading">
-            <h2>Adicionar participantes</h2>
+            <h2>Convites iniciais</h2>
             <span className="stat-chip stat-chip--positive">
-              {selectedMembersState.length} adicionados
+              {selectedMembersState.length} email(s)
             </span>
           </div>
 
@@ -224,6 +248,12 @@ export function CreateGroupScreen({
               }}
             />
           </label>
+
+          <ActionFeedback
+            tone="info"
+            title="Etapa opcional"
+            message="O grupo já nasce com você como owner. Se quiser, adicione emails para deixar convites pendentes desde a criação."
+          />
 
           <div className="member-pills">
             {selectedMembersState.map((member) => (
@@ -259,31 +289,33 @@ export function CreateGroupScreen({
           ) : null}
         </section>
 
-        <section className="report-card stack-column">
-          <div className="section-heading">
-            <h2>Contatos frequentes</h2>
-            <Sparkles size={18} color="var(--primary-bright)" />
-          </div>
-          <div className="quick-grid">
-            {filteredConnections.map((contact) => (
-              <button
-                key={contact.name}
-                type="button"
-                className="quick-card"
-                onClick={() => handleAddMember(contact)}
-              >
-                <Avatar
-                  name={contact.name}
-                  initials={contact.initials}
-                  tone={contact.tone}
-                  size="md"
-                />
-                <strong>{contact.name}</strong>
-                <p className="list-card__meta">Adicionar rápido</p>
-              </button>
-            ))}
-          </div>
-        </section>
+        {filteredConnections.length > 0 ? (
+          <section className="report-card stack-column">
+            <div className="section-heading">
+              <h2>Contatos frequentes</h2>
+              <Sparkles size={18} color="var(--primary-bright)" />
+            </div>
+            <div className="quick-grid">
+              {filteredConnections.map((contact) => (
+                <button
+                  key={contact.name}
+                  type="button"
+                  className="quick-card"
+                  onClick={() => handleAddMember(contact)}
+                >
+                  <Avatar
+                    name={contact.name}
+                    initials={contact.initials}
+                    tone={contact.tone}
+                    size="md"
+                  />
+                  <strong>{contact.name}</strong>
+                  <p className="list-card__meta">Adicionar rápido</p>
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <button
           type="button"

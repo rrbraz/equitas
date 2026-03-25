@@ -15,6 +15,7 @@ export function FloatingAction({ href, label }: FloatingActionProps) {
       title={label}
     >
       <Plus size={22} strokeWidth={2.5} />
+      <span className="floating-action__label">{label}</span>
     </Link>
   );
 }

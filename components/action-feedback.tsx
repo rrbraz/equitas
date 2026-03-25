@@ -19,9 +19,14 @@ export function ActionFeedback({
 }: ActionFeedbackProps) {
   const Icon = toneIcons[tone];
   const role = tone === "error" ? "alert" : "status";
+  const ariaLive = tone === "error" ? "assertive" : "polite";
 
   return (
-    <div className={`feedback-banner feedback-banner--${tone}`} role={role}>
+    <div
+      className={`feedback-banner feedback-banner--${tone}`}
+      role={role}
+      aria-live={ariaLive}
+    >
       <div className="feedback-banner__icon">
         <Icon size={18} />
       </div>

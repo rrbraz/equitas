@@ -39,7 +39,7 @@ const items = [
 ];
 
 export function BottomNav() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const searchParams = useSearchParams();
   const preservedParams = new URLSearchParams();
 
@@ -67,6 +67,7 @@ export function BottomNav() {
             key={item.href}
             href={itemHref}
             className={cn("bottom-nav__link", active && "is-active")}
+            aria-current={active ? "page" : undefined}
           >
             <Icon size={18} strokeWidth={active ? 2.4 : 2} />
             <span>{item.label}</span>

@@ -257,14 +257,16 @@ Critérios de aceite:
 
 ### H8. Criar o perfil base do usuário
 
+Status: concluída
+
 Objetivo: garantir um registro de domínio para cada conta autenticada.
 
 Tarefas:
 
-- [ ] Criar perfil automaticamente após signup.
-- [ ] Definir nome exibido, avatar e campos mínimos.
-- [ ] Ajustar a tela de perfil para ler e editar dados reais.
-- [ ] Sincronizar sessão e perfil no carregamento do app.
+- [x] Criar perfil automaticamente após signup.
+- [x] Definir nome exibido, avatar e campos mínimos.
+- [x] Ajustar a tela de perfil para ler e editar dados reais.
+- [x] Sincronizar sessão e perfil no carregamento do app.
 
 Critérios de aceite:
 
@@ -275,15 +277,17 @@ Critérios de aceite:
 
 ### H9. Criar grupos reais
 
+Status: concluída
+
 Objetivo: permitir que o usuário inicie uso real do produto.
 
 Tarefas:
 
-- [ ] Conectar a tela de criação de grupo ao backend.
-- [ ] Validar nome, categoria e descrição.
-- [ ] Gerar `slug` estável.
-- [ ] Inserir criador como membro e owner do grupo.
-- [ ] Redirecionar para o detalhe do grupo criado.
+- [x] Conectar a tela de criação de grupo ao backend.
+- [x] Validar nome, categoria e descrição.
+- [x] Gerar `slug` estável.
+- [x] Inserir criador como membro e owner do grupo.
+- [x] Redirecionar para o detalhe do grupo criado.
 
 Critérios de aceite:
 
@@ -292,15 +296,17 @@ Critérios de aceite:
 
 ### H10. Listar grupos do usuário com dados reais
 
+Status: concluída
+
 Objetivo: transformar `/grupos` e `/dashboard` em entradas confiáveis.
 
 Tarefas:
 
-- [ ] Buscar grupos por membership do usuário.
-- [ ] Exibir contagem real de membros.
-- [ ] Exibir saldo consolidado por grupo.
-- [ ] Tratar caso sem grupos.
-- [ ] Remover dependência de mocks nessas páginas.
+- [x] Buscar grupos por membership do usuário.
+- [x] Exibir contagem real de membros.
+- [x] Exibir saldo consolidado por grupo.
+- [x] Tratar caso sem grupos.
+- [x] Remover dependência de mocks nessas páginas.
 
 Critérios de aceite:
 
@@ -309,15 +315,17 @@ Critérios de aceite:
 
 ### H11. Implementar entrada e gestão básica de membros
 
+Status: concluída
+
 Objetivo: permitir que grupos deixem de ser individuais.
 
 Tarefas:
 
-- [ ] Criar modelo simples de convite.
-- [ ] Permitir convidar por e-mail ou link interno.
-- [ ] Listar membros no detalhe do grupo.
-- [ ] Exibir papel do membro.
-- [ ] Permitir remover membro quando não houver conflito de regra.
+- [x] Criar modelo simples de convite.
+- [x] Permitir convidar por e-mail ou link interno.
+- [x] Listar membros no detalhe do grupo.
+- [x] Exibir papel do membro.
+- [x] Permitir remover membro quando não houver conflito de regra.
 
 Critérios de aceite:
 
@@ -328,15 +336,17 @@ Critérios de aceite:
 
 ### H12. Registrar despesa com divisão igual
 
+Status: concluída
+
 Objetivo: entregar o primeiro fluxo fim a fim do produto.
 
 Tarefas:
 
-- [ ] Conectar `ExpenseComposer` a um formulário real.
-- [ ] Validar valor, descrição, data, pagador e grupo.
-- [ ] Persistir `expense` e `expense_splits`.
-- [ ] Definir participantes padrão da divisão.
-- [ ] Atualizar o detalhe do grupo após salvar.
+- [x] Conectar `ExpenseComposer` a um formulário real.
+- [x] Validar valor, descrição, data, pagador e grupo.
+- [x] Persistir `expense` e `expense_splits`.
+- [x] Definir participantes padrão da divisão.
+- [x] Atualizar o detalhe do grupo após salvar.
 
 Critérios de aceite:
 
@@ -345,14 +355,16 @@ Critérios de aceite:
 
 ### H13. Suportar divisão customizada simples
 
+Status: concluída
+
 Objetivo: cobrir o principal caso de uso além do split igual.
 
 Tarefas:
 
-- [ ] Permitir selecionar participantes.
-- [ ] Permitir editar valor por participante.
-- [ ] Validar soma dos splits.
-- [ ] Exibir erro claro quando a conta não fecha.
+- [x] Permitir selecionar participantes.
+- [x] Permitir editar valor por participante.
+- [x] Validar soma dos splits.
+- [x] Exibir erro claro quando a conta não fecha.
 
 Critérios de aceite:
 
@@ -361,15 +373,17 @@ Critérios de aceite:
 
 ### H14. Editar e excluir despesas com segurança
 
+Status: concluída
+
 Objetivo: permitir correção de erro sem corromper o saldo.
 
 Tarefas:
 
-- [ ] Implementar edição de campos permitidos.
-- [ ] Recalcular splits quando a despesa for alterada.
-- [ ] Permitir exclusão com confirmação.
-- [ ] Definir regra de quem pode editar ou excluir.
-- [ ] Atualizar saldos após alteração.
+- [x] Implementar edição de campos permitidos.
+- [x] Recalcular splits quando a despesa for alterada.
+- [x] Permitir exclusão com confirmação.
+- [x] Definir regra de quem pode editar ou excluir.
+- [x] Atualizar saldos após alteração.
 
 Critérios de aceite:
 
@@ -380,14 +394,16 @@ Critérios de aceite:
 
 ### H15. Calcular saldo confiável por grupo
 
+Status: concluída
+
 Objetivo: transformar saldo em regra de negócio central, não em valor mockado.
 
 Tarefas:
 
-- [ ] Definir a regra oficial de saldo.
-- [ ] Implementar query, view ou função para snapshot por grupo.
-- [ ] Validar saldo por membro em cenários simples e compostos.
-- [ ] Expor saldo no detalhe do grupo e no dashboard.
+- [x] Definir a regra oficial de saldo.
+- [x] Implementar query, view ou função para snapshot por grupo.
+- [x] Validar saldo por membro em cenários simples e compostos.
+- [x] Expor saldo no detalhe do grupo e no dashboard.
 
 Critérios de aceite:
 
@@ -396,15 +412,17 @@ Critérios de aceite:
 
 ### H16. Registrar settlements
 
+Status: concluída
+
 Objetivo: permitir liquidação entre membros.
 
 Tarefas:
 
-- [ ] Criar fluxo de registrar pagamento entre membros.
-- [ ] Persistir settlement no backend.
-- [ ] Atualizar saldo após settlement.
-- [ ] Exibir settlement no histórico do grupo.
-- [ ] Definir regra para impedir valor inválido.
+- [x] Criar fluxo de registrar pagamento entre membros.
+- [x] Persistir settlement no backend.
+- [x] Atualizar saldo após settlement.
+- [x] Exibir settlement no histórico do grupo.
+- [x] Definir regra para impedir valor inválido.
 
 Critérios de aceite:
 
@@ -415,15 +433,17 @@ Critérios de aceite:
 
 ### H17. Substituir o dashboard mockado por dados reais
 
+Status: concluída
+
 Objetivo: transformar a home em leitura operacional do app.
 
 Tarefas:
 
-- [ ] Calcular saldo líquido do usuário.
-- [ ] Exibir total a receber e a pagar.
-- [ ] Exibir grupos prioritários.
-- [ ] Exibir atividades recentes reais.
-- [ ] Tratar ausência de histórico.
+- [x] Calcular saldo líquido do usuário.
+- [x] Exibir total a receber e a pagar.
+- [x] Exibir grupos prioritários.
+- [x] Exibir atividades recentes reais.
+- [x] Tratar ausência de histórico.
 
 Critérios de aceite:
 
@@ -432,14 +452,16 @@ Critérios de aceite:
 
 ### H18. Implementar histórico por grupo e histórico global
 
+Status: concluída
+
 Objetivo: dar rastreabilidade ao uso do app.
 
 Tarefas:
 
-- [ ] Montar timeline de despesas e settlements por grupo.
-- [ ] Criar histórico global do usuário.
-- [ ] Permitir filtros simples por período e grupo.
-- [ ] Ordenar eventos por data de ocorrência.
+- [x] Montar timeline de despesas e settlements por grupo.
+- [x] Criar histórico global do usuário.
+- [x] Permitir filtros simples por período e grupo.
+- [x] Ordenar eventos por data de ocorrência.
 
 Critérios de aceite:
 
@@ -448,14 +470,16 @@ Critérios de aceite:
 
 ### H19. Conectar relatórios ao backend
 
+Status: concluída
+
 Objetivo: transformar `/relatorios` em valor analítico real.
 
 Tarefas:
 
-- [ ] Calcular agregados por categoria.
-- [ ] Calcular evolução temporal simples.
-- [ ] Exibir indicadores de settlement pendente.
-- [ ] Definir recorte inicial:
+- [x] Calcular agregados por categoria.
+- [x] Calcular evolução temporal simples.
+- [x] Exibir indicadores de settlement pendente.
+- [x] Definir recorte inicial:
   - últimos 30 dias
   - últimos 90 dias
   - período customizado depois
@@ -469,17 +493,19 @@ Critérios de aceite:
 
 ### H20. Cobrir fluxos críticos com testes
 
+Status: concluída
+
 Objetivo: reduzir regressão no núcleo do produto.
 
 Tarefas:
 
-- [ ] Testar funções puras de cálculo de split e saldo.
-- [ ] Testar camada de validação de formulários.
-- [ ] Testar ao menos um fluxo fim a fim:
+- [x] Testar funções puras de cálculo de split e saldo.
+- [x] Testar camada de validação de formulários.
+- [x] Testar ao menos um fluxo fim a fim:
   - criar grupo
   - criar despesa
   - registrar settlement
-- [ ] Definir estratégia mínima de fixtures e dados de teste.
+- [x] Definir estratégia mínima de fixtures e dados de teste.
 
 Critérios de aceite:
 
@@ -487,14 +513,16 @@ Critérios de aceite:
 
 ### H21. Adicionar observabilidade básica
 
+Status: concluída
+
 Objetivo: ter visibilidade quando algo falhar em produção.
 
 Tarefas:
 
-- [ ] Padronizar logs de erro do servidor.
-- [ ] Registrar falhas de ações críticas.
-- [ ] Avaliar integração simples de monitoramento.
-- [ ] Documentar onde olhar em caso de incidente.
+- [x] Padronizar logs de erro do servidor.
+- [x] Registrar falhas de ações críticas.
+- [x] Avaliar integração simples de monitoramento.
+- [x] Documentar onde olhar em caso de incidente.
 
 Critérios de aceite:
 
@@ -503,15 +531,17 @@ Critérios de aceite:
 
 ### H22. Fechar checklist de produção
 
+Status: concluída
+
 Objetivo: publicar sem improviso.
 
 Tarefas:
 
-- [ ] Revisar variáveis de ambiente.
-- [ ] Revisar políticas RLS em ambiente final.
-- [ ] Validar fluxo de signup, criação de grupo, despesa e settlement.
-- [ ] Revisar SEO e metadados apenas no nível essencial.
-- [ ] Documentar rollback simples.
+- [x] Revisar variáveis de ambiente.
+- [x] Revisar políticas RLS em ambiente final.
+- [x] Validar fluxo de signup, criação de grupo, despesa e settlement.
+- [x] Revisar SEO e metadados apenas no nível essencial.
+- [x] Documentar rollback simples.
 
 Critérios de aceite:
 
@@ -567,3 +597,7 @@ Esse corte já permite:
 - ver saldo real
 - registrar liquidação
 - acompanhar dashboard funcional
+
+## Estado Atual
+
+O backlog inicial desta fase foi concluído de H1 a H22.

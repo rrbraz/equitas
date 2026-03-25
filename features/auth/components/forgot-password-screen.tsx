@@ -76,7 +76,13 @@ export function ForgotPasswordScreen() {
           />
         ) : null}
 
-        <div className="form-stack">
+        <form
+          className="form-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit();
+          }}
+        >
           <label>
             <span className="field-label">Email</span>
             <input
@@ -87,17 +93,16 @@ export function ForgotPasswordScreen() {
               onChange={(event) => setEmail(event.target.value)}
             />
           </label>
-        </div>
 
-        <button
-          type="button"
-          className="primary-button primary-button--full"
-          onClick={handleSubmit}
-          disabled={isPending}
-        >
-          <MailCheck size={18} />
-          {isPending ? "Enviando..." : "Enviar instruções"}
-        </button>
+          <button
+            type="submit"
+            className="primary-button primary-button--full"
+            disabled={isPending}
+          >
+            <MailCheck size={18} />
+            {isPending ? "Enviando..." : "Enviar instruções"}
+          </button>
+        </form>
       </section>
     </div>
   );

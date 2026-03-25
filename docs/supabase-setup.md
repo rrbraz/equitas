@@ -64,21 +64,22 @@ Observação:
 - se você já tinha um banco local antigo com dados demo pré-H5, rode `npm run supabase:db:reset`
   antes de seguir
 
-## Criar usuários de teste antes da H7/H8
+## Criar usuários de teste a partir da H8
 
-Enquanto o app ainda não cria perfil automaticamente:
+O app já cria o profile base ao carregar uma sessão autenticada. Para preparar
+usuários de teste:
 
 1. Rode `npm run supabase:start`.
 2. Abra o Supabase Studio local.
 3. Crie um usuário em `Authentication > Users`.
-4. Copie o `id` do usuário criado.
-5. Insira o profile manualmente no SQL Editor com o mesmo `id`.
+4. Entre no app com esse usuário ao menos uma vez.
+5. Confirme no SQL Editor que o `profile` foi criado com o mesmo `id`.
 
-Exemplo:
+Se precisar criar manualmente:
 
 ```sql
-insert into profiles (id, full_name, email)
-values ('<auth-user-id>', 'Usuário Teste', 'teste@example.com');
+insert into profiles (id, full_name, email, city)
+values ('<auth-user-id>', 'Usuário Teste', 'teste@example.com', 'Sao Paulo');
 ```
 
 ## Criar nova migration

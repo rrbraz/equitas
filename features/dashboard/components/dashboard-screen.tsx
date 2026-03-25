@@ -12,6 +12,8 @@ import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
 import { FloatingAction } from "@/components/floating-action";
+import { MetaPill, MetaPills } from "@/components/meta-pills";
+import { SectionBlock } from "@/components/section-block";
 import { TopBar } from "@/components/top-bar";
 import type { DashboardScreenData } from "@/features/dashboard/types";
 import { formatCurrency, formatSignedCurrency } from "@/lib/format";
@@ -25,6 +27,9 @@ const groupIcons = {
 export function DashboardScreen({
   viewer,
   totals,
+  groupCount,
+  pendingCount,
+  recentActivityCount,
   groupPreviews,
   recentActivities,
   expenseHref,
@@ -39,9 +44,6 @@ export function DashboardScreen({
     groupPreviews.length === 0 &&
     recentActivities.length === 0;
   const preservedParams = new URLSearchParams();
-  if (isOnboardingState) {
-    preservedParams.set("scenario", "new");
-  }
   if (createdGroupQuery) {
     const createdParams = new URLSearchParams(createdGroupQuery);
 
@@ -67,14 +69,27 @@ export function DashboardScreen({
             initials={viewer.initials}
             tone="amber"
             size="sm"
+            src={viewer.avatarUrl ?? undefined}
           />
         }
       />
 
       <main className="page-content">
         <section className="hero-card hero-card--light">
-          <span className="section-label">Saldo líquido</span>
+          <span className="section-label">
+            {isOnboardingState ? "Começo do app" : "Saldo líquido"}
+          </span>
           <h1 className="hero-amount">{formatCurrency(totals.netBalance)}</h1>
+          <p className="supporting-copy">
+            {isOnboardingState
+              ? "Você ainda está no zero operacional. O próximo passo é criar um grupo e registrar a primeira despesa."
+              : `Você tem ${groupCount} grupo(s) conectados, ${recentActivityCount} movimento(s) recente(s) e ${pendingCount} pendência(s) ativa(s).`}
+          </p>
+          <MetaPills className="hero-card__meta">
+            <MetaPill>{groupCount} grupo(s)</MetaPill>
+            <MetaPill>{recentActivityCount} movimento(s)</MetaPill>
+            <MetaPill>{pendingCount} pendência(s)</MetaPill>
+          </MetaPills>
           <div className="hero-balance-row">
             <div className="metric-card money-positive">
               <span>
@@ -93,13 +108,15 @@ export function DashboardScreen({
           </div>
         </section>
 
-        <section className="stack-column">
-          <div className="section-heading">
-            <h2>Seus grupos</h2>
+        <SectionBlock
+          title="Seus grupos"
+          description="Atalhos para os grupos mais relevantes neste momento."
+          trailing={
             <Link href={groupsHref} className="ghost-link">
               Ver todos
             </Link>
-          </div>
+          }
+        >
           {groupPreviews.length > 0 ? (
             <div className="list-stack">
               {groupPreviews.map((group) => {
@@ -147,15 +164,17 @@ export function DashboardScreen({
               actionLabel="Criar primeiro grupo"
             />
           )}
-        </section>
+        </SectionBlock>
 
-        <section className="stack-column">
-          <div className="section-heading">
-            <h2>Atividade recente</h2>
+        <SectionBlock
+          title="Atividade recente"
+          description="O que acabou de mexer no saldo dos seus grupos."
+          trailing={
             <Link href={reportsHref} className="ghost-link">
               Relatórios
             </Link>
-          </div>
+          }
+        >
           {recentActivities.length > 0 ? (
             <div className="list-stack">
               {recentActivities.map((activity) => (
@@ -194,50 +213,53 @@ export function DashboardScreen({
               actionLabel="Explorar grupos"
             />
           )}
-        </section>
+        </SectionBlock>
 
-        <section className="report-card">
-          <div className="section-heading">
-            <div>
-              <span className="section-label">Panorama rápido</span>
-              <h2>
-                {isOnboardingState
-                  ? "Próximo passo recomendado"
-                  : "Momento financeiro"}
-              </h2>
-            </div>
+        <SectionBlock
+          eyebrow="Panorama rápido"
+          title={
+            isOnboardingState
+              ? "Próximo passo recomendado"
+              : "Momento financeiro"
+          }
+          trailing={
             <Link href={reportsHref} className="ghost-link">
               Ver leitura
             </Link>
-          </div>
+          }
+        >
           <p className="supporting-copy">
             {isOnboardingState
               ? "Assim que você criar o primeiro grupo, este bloco passa a resumir volume, pendências e saúde de quitação."
-              : "O grupo de viagem segue puxando caixa positivo e as últimas quitações melhoraram o balanço geral."}
+              : `Você já tem ${groupCount} grupo(s) conectados ao dashboard, com saldo, histórico recente e leitura operacional do momento.`}
           </p>
           <div className="metric-grid">
             <div className="summary-card">
               <span className="section-label">
                 {isOnboardingState ? "Grupos" : "Movimentos"}
               </span>
-              <strong>{isOnboardingState ? "0" : "18"}</strong>
+              <strong>
+                {isOnboardingState ? "0" : String(recentActivityCount)}
+              </strong>
               <p className="list-card__meta">
-                {isOnboardingState ? "prontos para começar" : "últimos 30 dias"}
+                {isOnboardingState
+                  ? "prontos para começar"
+                  : "entradas recentes"}
               </p>
             </div>
             <div className="summary-card">
               <span className="section-label">
                 {isOnboardingState ? "Pendências" : "Pendências"}
               </span>
-              <strong>{isOnboardingState ? "0" : "3"}</strong>
+              <strong>{isOnboardingState ? "0" : String(pendingCount)}</strong>
               <p className="list-card__meta">
                 {isOnboardingState
                   ? "até a primeira despesa"
-                  : "quitações abertas"}
+                  : "grupos com saldo negativo"}
               </p>
             </div>
           </div>
-        </section>
+        </SectionBlock>
       </main>
 
       <FloatingAction href={expenseHref} label={expenseLabel} />

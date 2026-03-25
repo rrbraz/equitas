@@ -6,6 +6,9 @@ import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
 import { FloatingAction } from "@/components/floating-action";
+import { MetaPills } from "@/components/meta-pills";
+import { PageIntro } from "@/components/page-intro";
+import { SectionBlock } from "@/components/section-block";
 import { TopBar } from "@/components/top-bar";
 import { getGroupsTotalBalance } from "@/features/groups/lib/get-groups-total-balance";
 import type { Group, GroupContact } from "@/features/groups/types";
@@ -41,40 +44,40 @@ export function GroupsScreen({
             initials={viewer.initials}
             tone="amber"
             size="sm"
+            src={viewer.avatarUrl ?? undefined}
           />
         }
       />
 
       <main className="page-content">
-        <section className="hero-copy">
-          <span className="eyebrow-note">Círculos ativos</span>
-          <h1>Grupos</h1>
-          <p>
-            Gerencie despesas compartilhadas, organize membros e acelere novos
-            splits sem sair do fluxo principal.
-          </p>
-        </section>
+        <PageIntro
+          eyebrow="Círculos ativos"
+          title="Grupos"
+          description="Gerencie despesas compartilhadas, organize membros e acelere novos splits sem sair do fluxo principal."
+        />
 
         <section className="hero-card">
           <span className="section-label">Saldo consolidado</span>
           <h2 className="hero-amount">{formatCurrency(totalBalance)}</h2>
-          <div className="stats-row">
+          <MetaPills className="hero-card__meta">
             <span
-              className={`stat-chip ${hasGroups ? "stat-chip--positive" : ""}`}
+              className={`meta-pill ${hasGroups ? "meta-pill--positive" : ""}`}
             >
-              {hasGroups ? "+4.2%" : "Sem histórico"}
+              {hasGroups ? "Dados reais" : "Sem histórico"}
             </span>
-            <span className="stat-chip">{groups.length} grupos</span>
-          </div>
+            <span className="meta-pill">{groups.length} grupos</span>
+          </MetaPills>
         </section>
 
-        <section className="stack-column">
-          <div className="section-heading">
-            <h2>Grupos ativos</h2>
+        <SectionBlock
+          title="Grupos ativos"
+          description="Sua entrada principal para saldos, membros e despesas."
+          trailing={
             <Link href="/grupos/criar" className="ghost-link">
               Criar novo
             </Link>
-          </div>
+          }
+        >
           {groups.length > 0 ? (
             <div className="list-stack">
               {groups.map((group) => (
@@ -121,53 +124,63 @@ export function GroupsScreen({
               actionLabel="Criar grupo"
             />
           )}
-        </section>
+        </SectionBlock>
 
-        <section className="stack-column">
-          <div className="section-heading">
-            <h2>Começar rápido</h2>
-            <Link href="/grupos/criar" className="ghost-link">
-              Abrir criador
-            </Link>
-          </div>
-          <div className="quick-grid">
-            {quickStartContacts.map((contact) => (
-              <Link
-                key={contact.name}
-                href={`/grupos/criar?member=${encodeURIComponent(contact.name)}`}
-                className="quick-card"
-              >
-                <Avatar
-                  name={contact.name}
-                  initials={contact.initials}
-                  tone={contact.tone}
-                  size="md"
-                />
-                <strong>{contact.name}</strong>
-                <p className="list-card__meta">Começar com {contact.name}</p>
+        {quickStartContacts.length > 0 ? (
+          <SectionBlock
+            title="Começar rápido"
+            description="Atalhos simples para iniciar um novo grupo com quem aparece com frequência."
+            trailing={
+              <Link href="/grupos/criar" className="ghost-link">
+                Abrir criador
               </Link>
-            ))}
-            <Link
-              href="/grupos/criar"
-              className="quick-card quick-card--invite"
-            >
-              <div className="inline-card__avatar inline-card__avatar--soft">
-                <Plus size={18} />
-              </div>
-              <strong>Convidar membro</strong>
-              <p className="list-card__meta">Novo círculo</p>
-            </Link>
-          </div>
-        </section>
+            }
+          >
+            <div className="quick-grid">
+              {quickStartContacts.map((contact) => (
+                <Link
+                  key={contact.name}
+                  href={`/grupos/criar?member=${encodeURIComponent(contact.name)}`}
+                  className="quick-card"
+                >
+                  <Avatar
+                    name={contact.name}
+                    initials={contact.initials}
+                    tone={contact.tone}
+                    size="md"
+                  />
+                  <strong>{contact.name}</strong>
+                  <p className="list-card__meta">Começar com {contact.name}</p>
+                </Link>
+              ))}
+              <Link
+                href="/grupos/criar"
+                className="quick-card quick-card--invite"
+              >
+                <div className="inline-card__avatar inline-card__avatar--soft">
+                  <Plus size={18} />
+                </div>
+                <strong>Convidar membro</strong>
+                <p className="list-card__meta">Novo círculo</p>
+              </Link>
+            </div>
+          </SectionBlock>
+        ) : null}
 
-        <section className="report-card">
+        <section className="report-card stack-column">
           <div className="section-heading">
-            <h2>{hasGroups ? "Leitura por carteira" : "Próximo passo"}</h2>
+            <div>
+              <h2>{hasGroups ? "Leitura por carteira" : "Próximo passo"}</h2>
+              <p className="supporting-copy">
+                Bloco de contexto para manter a listagem operável sem poluir a
+                tela.
+              </p>
+            </div>
             <Wallet size={18} color="var(--primary-bright)" />
           </div>
           <p className="supporting-copy">
             {hasGroups
-              ? "Os grupos de moradia estão estáveis. Viagens e eventos continuam puxando crescimento no volume dividido."
+              ? "Os grupos reais da sua conta já aparecem aqui. Conforme despesas e quitações entrarem, este bloco passa a resumir ritmo e pendências com dados do backend."
               : "Assim que o primeiro grupo nascer, este bloco passa a resumir ritmo, categorias e sinais de atenção da carteira compartilhada."}
           </p>
         </section>

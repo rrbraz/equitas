@@ -1,5 +1,7 @@
 import { ChangePasswordScreen } from "@/features/profile/components/change-password-screen";
 
+export const dynamic = "force-dynamic";
+
 export default async function PerfilSegurancaPage({
   searchParams,
 }: {

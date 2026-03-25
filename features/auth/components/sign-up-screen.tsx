@@ -113,7 +113,13 @@ export function SignUpScreen({
           />
         ) : null}
 
-        <div className="form-stack">
+        <form
+          className="form-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit();
+          }}
+        >
           <label>
             <span className="field-label">Nome completo</span>
             <input
@@ -152,17 +158,16 @@ export function SignUpScreen({
               }}
             />
           </label>
-        </div>
 
-        <button
-          type="button"
-          className="primary-button primary-button--full"
-          onClick={handleSubmit}
-          disabled={isPending}
-        >
-          {isPending ? "Criando conta..." : "Criar conta"}
-          <ArrowRight size={18} />
-        </button>
+          <button
+            type="submit"
+            className="primary-button primary-button--full"
+            disabled={isPending}
+          >
+            {isPending ? "Criando conta..." : "Criar conta"}
+            <ArrowRight size={18} />
+          </button>
+        </form>
 
         <ActionFeedback
           tone="info"

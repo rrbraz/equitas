@@ -13,7 +13,7 @@ export function TopBar({ eyebrow, title, leading, trailing }: TopBarProps) {
       <div className="top-bar__side">{leading}</div>
       <div className="top-bar__copy">
         {eyebrow ? <span className="top-bar__eyebrow">{eyebrow}</span> : null}
-        <span className="top-bar__title">{title}</span>
+        <h1 className="top-bar__title">{title}</h1>
       </div>
       <div className="top-bar__side top-bar__side--right">{trailing}</div>
     </header>

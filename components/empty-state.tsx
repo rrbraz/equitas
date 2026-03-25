@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+
+import { ButtonLink } from "@/components/button";
 
 type EmptyStateProps = {
   eyebrow?: string;
@@ -27,9 +28,9 @@ export function EmptyState({
         <p>{description}</p>
       </div>
       {actionHref && actionLabel ? (
-        <Link href={actionHref} className="primary-button primary-button--full">
+        <ButtonLink href={actionHref} fullWidth>
           {actionLabel}
-        </Link>
+        </ButtonLink>
       ) : null}
     </article>
   );

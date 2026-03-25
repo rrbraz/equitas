@@ -28,15 +28,17 @@
 
 - o seed está propositalmente enxuto
 - a partir da H5, `profiles` precisa respeitar o contrato com `auth.users`
+- a partir da H8, o app cria e sincroniza o profile base automaticamente na
+  primeira sessão autenticada
 - enquanto o app ainda não usa auth real, preferimos um banco vazio e previsível a
   dados demo artificiais
 - se você tinha um banco local anterior à H5, faça `npm run supabase:db:reset`
 
-## Usuários de teste antes da H7/H8
+## Usuários de teste a partir da H8
 
 - crie o usuário em `Authentication > Users` no Supabase Studio local
-- copie o `id` gerado
-- insira o profile manualmente usando esse mesmo `id`
+- entre no app com esse usuário ao menos uma vez para o profile ser criado
+- se quiser evitar a UI, insira o profile manualmente usando o mesmo `id`
 
 ## Reset de ambiente
 

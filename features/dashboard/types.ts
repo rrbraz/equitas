@@ -1,3 +1,5 @@
+import type { Viewer } from "@/features/viewer/types";
+
 export type DashboardTotals = {
   netBalance: number;
   owedToYou: number;
@@ -24,16 +26,11 @@ export type Activity = {
 };
 
 export type DashboardScreenData = {
-  viewer: {
-    id: string;
-    name: string;
-    initials: string;
-    role: string;
-    city: string;
-    since: string;
-    memberSinceLabel: string;
-  };
+  viewer: Viewer;
   totals: DashboardTotals;
+  groupCount: number;
+  pendingCount: number;
+  recentActivityCount: number;
   groupPreviews: DashboardGroupPreview[];
   recentActivities: Activity[];
   expenseHref: string;

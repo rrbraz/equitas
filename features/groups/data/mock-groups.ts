@@ -33,6 +33,7 @@ export const mockGroups: Group[] = [
     trend: "+4.2%",
     members: [
       {
+        profileId: "mock-viewer",
         member: "Você",
         initials: "JV",
         tone: "amber",
@@ -41,6 +42,7 @@ export const mockGroups: Group[] = [
         balance: 840,
       },
       {
+        profileId: "mock-beatriz",
         member: "Beatriz",
         initials: "BT",
         tone: "green",
@@ -49,6 +51,7 @@ export const mockGroups: Group[] = [
         balance: -320,
       },
       {
+        profileId: "mock-ricardo",
         member: "Ricardo",
         initials: "RC",
         tone: "indigo",
@@ -65,6 +68,7 @@ export const mockGroups: Group[] = [
         paidBy: "Você",
         amount: 450,
         splitPreview: "Você + Leo + Ana",
+        canManage: true,
       },
       {
         id: "exp-airbnb",
@@ -73,6 +77,7 @@ export const mockGroups: Group[] = [
         paidBy: "Você",
         amount: 2800,
         splitPreview: "4 pessoas",
+        canManage: true,
       },
       {
         id: "exp-uber",
@@ -81,8 +86,10 @@ export const mockGroups: Group[] = [
         paidBy: "Ricardo",
         amount: 120,
         splitPreview: "Você, Ricardo, Bia",
+        canManage: false,
       },
     ],
+    settlements: [],
   },
   {
     id: "group-casa",
@@ -98,6 +105,7 @@ export const mockGroups: Group[] = [
     trend: "Estável",
     members: [
       {
+        profileId: "mock-viewer",
         member: "Você",
         initials: "JV",
         tone: "amber",
@@ -106,6 +114,7 @@ export const mockGroups: Group[] = [
         balance: 0,
       },
       {
+        profileId: "mock-marina",
         member: "Marina",
         initials: "MR",
         tone: "green",
@@ -114,6 +123,7 @@ export const mockGroups: Group[] = [
         balance: 0,
       },
       {
+        profileId: "mock-lucas",
         member: "Lucas",
         initials: "LC",
         tone: "indigo",
@@ -130,6 +140,7 @@ export const mockGroups: Group[] = [
         paidBy: "Marina",
         amount: 199.9,
         splitPreview: "3 pessoas",
+        canManage: false,
       },
       {
         id: "exp-luz",
@@ -138,8 +149,10 @@ export const mockGroups: Group[] = [
         paidBy: "Você",
         amount: 287.4,
         splitPreview: "3 pessoas",
+        canManage: true,
       },
     ],
+    settlements: [],
   },
   {
     id: "group-onboarding",
@@ -154,6 +167,7 @@ export const mockGroups: Group[] = [
     trend: "Novo",
     members: [
       {
+        profileId: "mock-viewer",
         member: "Você",
         initials: "JV",
         tone: "amber",
@@ -162,6 +176,7 @@ export const mockGroups: Group[] = [
         balance: -12.4,
       },
       {
+        profileId: "mock-joana",
         member: "Joana",
         initials: "JO",
         tone: "rose",
@@ -178,8 +193,10 @@ export const mockGroups: Group[] = [
         paidBy: "Joana",
         amount: 74.4,
         splitPreview: "6 pessoas",
+        canManage: false,
       },
     ],
+    settlements: [],
   },
   {
     id: "group-roadtrip",
@@ -194,6 +211,7 @@ export const mockGroups: Group[] = [
     trend: "Novo",
     members: [
       {
+        profileId: "mock-viewer",
         member: "Você",
         initials: "JV",
         tone: "amber",
@@ -202,6 +220,7 @@ export const mockGroups: Group[] = [
         balance: 0,
       },
       {
+        profileId: "mock-sarah",
         member: "Sarah Johnson",
         initials: "SJ",
         tone: "green",
@@ -210,6 +229,7 @@ export const mockGroups: Group[] = [
         balance: 0,
       },
       {
+        profileId: "mock-marcus",
         member: "Marcus K.",
         initials: "MK",
         tone: "indigo",
@@ -218,6 +238,7 @@ export const mockGroups: Group[] = [
         balance: 0,
       },
       {
+        profileId: "mock-david",
         member: "David Wu",
         initials: "DW",
         tone: "green",
@@ -227,6 +248,7 @@ export const mockGroups: Group[] = [
       },
     ],
     expenses: [],
+    settlements: [],
   },
 ];
 
@@ -325,6 +347,7 @@ function buildCreatedGroup({
     trend: "Novo",
     members: [
       {
+        profileId: "mock-viewer",
         member: "Você",
         initials: mockCurrentViewer.initials,
         tone: "amber",
@@ -336,6 +359,7 @@ function buildCreatedGroup({
         const knownContact = getContactByName(memberName);
 
         return {
+          profileId: `mock-${memberName.toLowerCase().replace(/\s+/g, "-")}`,
           member: memberName,
           initials: knownContact?.initials ?? getInitials(memberName),
           tone: knownContact?.tone ?? getContactTone(index + 1),
@@ -346,6 +370,7 @@ function buildCreatedGroup({
       }),
     ],
     expenses: [],
+    settlements: [],
   };
 }
 
@@ -431,6 +456,7 @@ export function applyMockExpenseToGroup(
         paidBy: expense.paidBy,
         amount: expense.amount,
         splitPreview: buildSplitPreview(expense.split),
+        canManage: true,
       },
       ...group.expenses,
     ],

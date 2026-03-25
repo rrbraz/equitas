@@ -11,6 +11,8 @@ Registrar as decisões do banco antes da conexão real dos fluxos principais.
   próximos fluxos reais.
 - `profiles.email` continua no domínio como cópia prática para leitura da aplicação,
   mas o sistema de identidade continua sendo o Supabase Auth.
+- O perfil base agora inclui `full_name`, `email`, `city` e `avatar_url` como
+  contrato mínimo para leitura e edição no app.
 - `updated_at` e `onboarding_completed` entram em `profiles` para suportar edição e
   leitura de estado inicial sem remendos.
 

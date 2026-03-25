@@ -24,5 +24,9 @@ export function formatSignedCurrency(
 }
 
 export function formatPercent(value: number) {
+  if (!Number.isFinite(value)) {
+    return "0.0%";
+  }
+
   return `${value.toFixed(1)}%`;
 }

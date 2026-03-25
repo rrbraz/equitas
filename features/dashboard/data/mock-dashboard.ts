@@ -89,6 +89,13 @@ export function getMockDashboardScreenData(
     totals: isNewJourney
       ? { netBalance: 0, owedToYou: 0, youOwe: 0 }
       : mockDashboardTotals,
+    groupCount: createdGroup ? groupPreviews.length + 1 : groupPreviews.length,
+    pendingCount: isNewJourney
+      ? 0
+      : groupPreviews.filter((group) => group.balance < 0).length,
+    recentActivityCount: createdGroup
+      ? recentActivities.length + 1
+      : recentActivities.length,
     groupPreviews: createdGroup
       ? [
           getDashboardGroupPreview(createdGroup),

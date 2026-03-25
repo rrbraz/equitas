@@ -6,8 +6,10 @@ import { ArrowLeft, KeyRound, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 import { ActionFeedback } from "@/components/action-feedback";
+import { Button } from "@/components/button";
 import { BottomNav } from "@/components/bottom-nav";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { PageIntro } from "@/components/page-intro";
 import { TopBar } from "@/components/top-bar";
 
 type ChangePasswordScreenProps = {
@@ -83,6 +85,16 @@ export function ChangePasswordScreen({
       />
 
       <main className="page-content">
+        <PageIntro
+          eyebrow={recoveryMode ? "Recuperação validada" : "Credenciais"}
+          title="Trocar senha"
+          description={
+            recoveryMode
+              ? "Defina a nova senha para concluir a retomada de acesso da conta."
+              : "Atualize a senha da sessão atual sem sair do fluxo principal."
+          }
+        />
+
         <ActionFeedback
           tone="info"
           title={recoveryMode ? "Defina a nova senha" : "Alterar senha"}
@@ -127,15 +139,10 @@ export function ChangePasswordScreen({
           </label>
         </section>
 
-        <button
-          type="button"
-          className="primary-button primary-button--full"
-          onClick={handleSubmit}
-          disabled={isPending}
-        >
+        <Button fullWidth onClick={handleSubmit} disabled={isPending}>
           {isPending ? <ShieldCheck size={18} /> : <KeyRound size={18} />}
           {isPending ? "Atualizando..." : "Atualizar senha"}
-        </button>
+        </Button>
       </main>
 
       <BottomNav />

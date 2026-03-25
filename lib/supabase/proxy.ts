@@ -2,7 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
+import { logServerError } from "@/lib/server/logger";
 import { getPublicSupabaseEnv, hasPublicSupabaseEnv } from "@/lib/supabase/env";
+import { ensureProfileForUser } from "@/lib/supabase/profile";
 
 const publicRoutes = new Set([
   "/",
@@ -68,6 +70,16 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (user) {
+    try {
+      await ensureProfileForUser(supabase, user);
+    } catch (error) {
+      logServerError("sync_profile_from_session_failed", error, {
+        userId: user.id,
+      });
+    }
+  }
 
   if (!user && !isPublicRoute(pathname)) {
     const loginUrl = request.nextUrl.clone();

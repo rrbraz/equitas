@@ -156,6 +156,9 @@ alter table group_members
   add column if not exists updated_at timestamptz not null default now();
 
 alter table group_members
+  alter column role drop default;
+
+alter table group_members
   alter column role type group_member_role
   using (
     case role
@@ -163,6 +166,9 @@ alter table group_members
       else role
     end
   )::group_member_role;
+
+alter table group_members
+  alter column role set default 'member';
 
 create index if not exists idx_group_members_profile_id
   on group_members(profile_id);
@@ -269,6 +275,9 @@ alter table settlements
 
 alter table settlements
   alter column created_at set not null;
+
+alter table settlements
+  alter column created_at set default now();
 
 alter table settlements
   drop constraint if exists settlements_amount_positive_check;
@@ -392,7 +401,9 @@ create trigger set_group_invites_updated_at
 before update on group_invites
 for each row execute function public.set_updated_at();
 
-create or replace view group_balance_snapshot as
+drop view if exists group_balance_snapshot;
+
+create view group_balance_snapshot as
 with paid_totals as (
   select
     expense.group_id,

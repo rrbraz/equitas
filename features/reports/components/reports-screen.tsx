@@ -1,21 +1,51 @@
+import Link from "next/link";
+
 import { AppMenu } from "@/components/app-menu";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { EmptyState } from "@/components/empty-state";
-import { ReportBars } from "@/features/reports/components/report-bars";
+import { MetaPills } from "@/components/meta-pills";
+import { PageIntro } from "@/components/page-intro";
+import { SectionBlock, SectionHeader } from "@/components/section-block";
 import { TopBar } from "@/components/top-bar";
-import { formatCurrency } from "@/lib/format";
+import { ReportBars } from "@/features/reports/components/report-bars";
 import type { ReportsScreenData } from "@/features/reports/types";
+import { formatCurrency, formatSignedCurrency } from "@/lib/format";
 
 export function ReportsScreen({
   viewer,
   totals,
   monthlyBalances,
   reportCategories,
+  historyItems,
+  availableGroups,
+  selectedGroupSlug,
+  selectedRangeDays,
 }: ReportsScreenData) {
   const hasReportData =
-    monthlyBalances.length > 0 || reportCategories.length > 0;
-  const groupsHref = hasReportData ? "/grupos" : "/grupos?scenario=new";
+    monthlyBalances.some((item) => item.value > 0) ||
+    reportCategories.length > 0 ||
+    historyItems.length > 0;
+
+  function buildReportHref(groupSlug?: string, rangeDays = selectedRangeDays) {
+    const params = new URLSearchParams();
+
+    if (rangeDays !== 90) {
+      params.set("range", String(rangeDays));
+    }
+
+    if (groupSlug) {
+      params.set("group", groupSlug);
+    }
+
+    return params.toString()
+      ? `/relatorios?${params.toString()}`
+      : "/relatorios";
+  }
+
+  const selectedGroupName = availableGroups.find(
+    (group) => group.slug === selectedGroupSlug,
+  )?.name;
 
   return (
     <div className="screen-shell">
@@ -28,53 +58,124 @@ export function ReportsScreen({
             initials={viewer.initials}
             tone="amber"
             size="sm"
+            src={viewer.avatarUrl ?? undefined}
           />
         }
       />
 
       <main className="page-content">
-        <section className="hero-copy">
-          <span className="eyebrow-note">Leitura financeira</span>
-          <h1>Relatórios.</h1>
-          <p>
-            Uma visão editorial do comportamento financeiro dos seus grupos com
-            foco em fluxo, categoria e saúde de quitação.
-          </p>
+        <PageIntro
+          eyebrow="Leitura financeira"
+          title="Relatórios reais por período e grupo."
+          description="Acompanhe volume, categorias, histórico e pendências usando apenas dados persistidos de despesas e settlements."
+          tone="card"
+          meta={
+            <MetaPills
+              items={[
+                `Últimos ${selectedRangeDays} dias`,
+                selectedGroupName ?? "Todos os grupos",
+                `${historyItems.length} evento(s)`,
+              ]}
+            />
+          }
+        />
+
+        <section className="surface-card stack-column">
+          <SectionHeader
+            eyebrow="Filtros"
+            title={selectedGroupName ?? "Todos os grupos"}
+            trailing={
+              <span className="section-label">
+                Últimos {selectedRangeDays} dias
+              </span>
+            }
+          />
+
+          <div>
+            <span className="field-label">Período</span>
+            <div className="pill-row">
+              {[30, 90].map((range) => (
+                <Link
+                  key={range}
+                  href={buildReportHref(selectedGroupSlug, range as 30 | 90)}
+                  className={`split-pill ${
+                    selectedRangeDays === range ? "is-active" : ""
+                  }`}
+                >
+                  {range} dias
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="field-label">Grupo</span>
+            <div className="pill-row">
+              <Link
+                href={buildReportHref(undefined, selectedRangeDays)}
+                className={`split-pill ${!selectedGroupSlug ? "is-active" : ""}`}
+              >
+                Todos
+              </Link>
+              {availableGroups.map((group) => (
+                <Link
+                  key={group.slug}
+                  href={buildReportHref(group.slug, selectedRangeDays)}
+                  className={`split-pill ${
+                    selectedGroupSlug === group.slug ? "is-active" : ""
+                  }`}
+                >
+                  {group.name}
+                </Link>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="report-card">
-          <div className="section-heading">
-            <div>
-              <span className="section-label">Resumo</span>
-              <h2>Gastos ao longo do tempo</h2>
-            </div>
-            <strong className="money-negative">
-              {formatCurrency(totals.youOwe)}
-            </strong>
-          </div>
+          <SectionHeader
+            eyebrow="Resumo"
+            title="Fluxo financeiro do período"
+            trailing={<strong>{formatCurrency(totals.totalExpenses)}</strong>}
+          />
           <div className="metric-grid">
+            <div className="summary-card">
+              <span className="section-label">Volume</span>
+              <strong>{formatCurrency(totals.totalExpenses)}</strong>
+              <p className="list-card__meta">em despesas registradas</p>
+            </div>
             <div className="summary-card">
               <span className="section-label">Você deve</span>
               <strong className="money-negative">
                 {formatCurrency(totals.youOwe)}
               </strong>
+              <p className="list-card__meta">saldo líquido atual</p>
             </div>
             <div className="summary-card">
               <span className="section-label">Devem para você</span>
               <strong className="money-positive">
                 {formatCurrency(totals.owedToYou)}
               </strong>
+              <p className="list-card__meta">saldo líquido atual</p>
+            </div>
+            <div className="summary-card">
+              <span className="section-label">Pendente</span>
+              <strong>{formatCurrency(totals.pendingSettlementTotal)}</strong>
+              <p className="list-card__meta">
+                {totals.pendingGroupCount} grupo(s) ainda em aberto
+              </p>
             </div>
           </div>
-          {monthlyBalances.length > 0 ? (
+
+          {monthlyBalances.some((item) => item.value > 0) ? (
             <ReportBars items={monthlyBalances} />
           ) : (
             <div className="report-card__empty">
               <EmptyState
-                eyebrow="Relatório em preparação"
-                title="Ainda não há histórico suficiente"
-                description="Assim que os grupos começarem a registrar despesas reais, esta área passa a mostrar ritmo, concentração e saúde de quitação."
-                actionHref={groupsHref}
+                eyebrow="Sem volume suficiente"
+                title="Ainda não há lançamentos no período filtrado"
+                description="Troque o período ou o grupo para ampliar a leitura, ou registre novas despesas para alimentar os relatórios."
+                actionHref="/grupos"
                 actionLabel="Ver grupos"
               />
             </div>
@@ -82,20 +183,25 @@ export function ReportsScreen({
         </section>
 
         {reportCategories.length > 0 ? (
-          <section className="stack-column">
-            <div className="section-heading">
-              <h2>Por categoria</h2>
-              <span className="section-label">Mensal</span>
-            </div>
+          <SectionBlock
+            title="Por categoria"
+            description="Como o gasto do período se distribui entre os tipos de despesa."
+            trailing={
+              <span className="section-label">Participação no período</span>
+            }
+          >
             {reportCategories.map((category) => (
               <article key={category.name} className="report-card stack-column">
-                <div className="section-heading">
-                  <div>
-                    <h2>{category.name}</h2>
-                    <p className="list-card__meta">{category.note}</p>
-                  </div>
-                  <strong>{category.share}%</strong>
-                </div>
+                <SectionHeader
+                  title={category.name}
+                  description={category.note}
+                  trailing={
+                    <div className="list-card__value">
+                      <span>{formatCurrency(category.amount)}</span>
+                      <strong>{category.share}%</strong>
+                    </div>
+                  }
+                />
                 <div className="progress">
                   <div
                     className={`progress__fill progress__fill--${category.tone}`}
@@ -104,18 +210,74 @@ export function ReportsScreen({
                 </div>
               </article>
             ))}
-          </section>
+          </SectionBlock>
         ) : null}
 
+        <SectionBlock
+          title="Histórico global"
+          description="Sequência consolidada de despesas e transferências do recorte."
+          trailing={
+            <span className="section-label">
+              {historyItems.length} evento(s)
+            </span>
+          }
+        >
+          {historyItems.length > 0 ? (
+            <div className="list-stack">
+              {historyItems.map((item) => (
+                <article key={item.id} className="list-card">
+                  <Avatar
+                    name={item.person}
+                    initials={item.initials}
+                    tone={item.tone}
+                    size="sm"
+                  />
+                  <div className="list-card__copy">
+                    <div className="list-card__title">{item.person}</div>
+                    <p className="list-card__meta">{item.action}</p>
+                    <p className="list-card__meta">
+                      {item.groupName} · {item.occurredAtLabel}
+                    </p>
+                  </div>
+                  <div className="list-card__value">
+                    <strong
+                      className={
+                        item.amount >= 0 ? "money-positive" : "money-negative"
+                      }
+                    >
+                      {formatSignedCurrency(item.amount)}
+                    </strong>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              eyebrow="Sem histórico"
+              title="Ainda não há eventos neste recorte"
+              description="O histórico combina despesas e transfers reais. Ajuste o filtro ou registre novas movimentações."
+              actionHref="/grupos"
+              actionLabel="Ver grupos"
+            />
+          )}
+        </SectionBlock>
+
         {hasReportData ? (
-          <section className="report-card stack-column">
-            <span className="section-label">Saúde de quitação</span>
-            <h2>8.4</h2>
-            <p className="supporting-copy">
-              Seu sistema está estável. A maioria dos grupos liquida rápido e
-              apenas um grupo exige atenção no curto prazo.
-            </p>
-          </section>
+          <SectionBlock
+            eyebrow="Saúde de quitação"
+            title={
+              totals.pendingGroupCount === 0
+                ? "Tudo em dia"
+                : `${totals.pendingGroupCount} grupo(s) pedem atenção`
+            }
+            description={
+              totals.pendingGroupCount === 0
+                ? "Não há saldo pendente entre membros neste recorte."
+                : `Ainda existem ${formatCurrency(
+                    totals.pendingSettlementTotal,
+                  )} em transferências pendentes para zerar os grupos filtrados.`
+            }
+          />
         ) : null}
       </main>
 

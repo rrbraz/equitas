@@ -10,7 +10,7 @@ import {
   CircleEqual,
   PencilLine,
   ReceiptText,
-  Settings2,
+  Trash2,
   UsersRound,
 } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -19,16 +19,43 @@ import { ActionFeedback } from "@/components/action-feedback";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { TopBar } from "@/components/top-bar";
+import { createExpense } from "@/features/expenses/actions/create-expense";
+import { deleteExpense } from "@/features/expenses/actions/delete-expense";
+import { updateExpense } from "@/features/expenses/actions/update-expense";
+import { expenseCategoryOptions } from "@/features/expenses/lib/expense-categories";
+import {
+  formatInputAmount,
+  getDistributedAmounts,
+  parseCurrencyInput,
+  sanitizeCurrencyInput,
+} from "@/features/expenses/lib/split-calculations";
 import type { Group, GroupBalance } from "@/features/groups/types";
 import { formatCurrency } from "@/lib/format";
+
+type EditableExpense = {
+  id: string;
+  title: string;
+  amount: number;
+  categoryLabel: string;
+  expenseDate: string;
+  paidByProfileId: string;
+  notes: string;
+  splits: Array<{
+    profile_id: string;
+    amount_owed: number;
+  }>;
+  canManage: boolean;
+};
 
 type ExpenseComposerProps = {
   group: Group;
   groupQuery?: string;
   actionErrorMessage?: string;
+  initialExpense?: EditableExpense;
 };
 
 type SplitParticipant = {
+  profileId: string;
   member: string;
   initials: string;
   tone: GroupBalance["tone"];
@@ -36,46 +63,58 @@ type SplitParticipant = {
   shareInput: string;
 };
 
-function sanitizeCurrencyInput(value: string) {
-  const normalized = value.replace(",", ".").replace(/[^\d.]/g, "");
-  const [integerPart = "", ...decimalParts] = normalized.split(".");
-  const decimalPart = decimalParts.join("").slice(0, 2);
+function formatDateInputValue(date: Date) {
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
-  if (!integerPart && normalized.startsWith(".")) {
-    return `0.${decimalPart}`;
+  return `${year}-${month}-${day}`;
+}
+
+function getTodayInputValue() {
+  return formatDateInputValue(new Date());
+}
+
+function normalizeExpenseDate(value?: string) {
+  if (value && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
   }
 
-  return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
+  return getTodayInputValue();
 }
 
-function parseCurrencyInput(value: string) {
-  return Number(sanitizeCurrencyInput(value) || 0);
-}
+function buildParticipants(
+  members: Group["members"],
+  amount: number,
+  initialSplits?: EditableExpense["splits"],
+) {
+  const splitByProfileId = new Map(
+    (initialSplits ?? []).map((split) => [
+      split.profile_id,
+      Number(split.amount_owed),
+    ]),
+  );
 
-function formatInputAmount(value: number) {
-  return (Math.round(value * 100) / 100).toFixed(2);
-}
+  if (splitByProfileId.size > 0) {
+    return members.map((member) => {
+      const profileId = member.profileId ?? "";
+      const splitAmount = splitByProfileId.get(profileId);
 
-function getDistributedAmounts(totalAmount: number, count: number) {
-  if (count <= 0) {
-    return [];
+      return {
+        profileId,
+        member: member.member,
+        initials: member.initials,
+        tone: member.tone,
+        included: splitAmount !== undefined,
+        shareInput: formatInputAmount(splitAmount ?? 0),
+      };
+    });
   }
 
-  const totalInCents = Math.round(totalAmount * 100);
-  const baseShare = Math.floor(totalInCents / count);
-  const remainder = totalInCents % count;
-
-  return Array.from({ length: count }, (_, index) => {
-    const shareInCents = baseShare + (index < remainder ? 1 : 0);
-
-    return shareInCents / 100;
-  });
-}
-
-function buildParticipants(members: Group["members"], amount: number) {
   const distributedAmounts = getDistributedAmounts(amount, members.length);
 
   return members.map((member, index) => ({
+    profileId: member.profileId ?? "",
     member: member.member,
     initials: member.initials,
     tone: member.tone,
@@ -116,26 +155,57 @@ function seedManualShares(
   });
 }
 
+function getNextExpenseCategory(currentCategory: string) {
+  const currentIndex = expenseCategoryOptions.findIndex(
+    (option) => option.label === currentCategory,
+  );
+  const nextIndex =
+    currentIndex === -1 || currentIndex === expenseCategoryOptions.length - 1
+      ? 0
+      : currentIndex + 1;
+
+  return expenseCategoryOptions[nextIndex]?.label ?? "Outro";
+}
+
 export function ExpenseComposer({
   group,
   groupQuery,
   actionErrorMessage,
+  initialExpense,
 }: ExpenseComposerProps) {
   const router = useRouter();
-  const [amount, setAmount] = useState("124.50");
-  const [description, setDescription] = useState("Jantar no Blue Lagoon");
-  const [selectedDate, setSelectedDate] = useState("Hoje");
-  const [selectedCategory, setSelectedCategory] = useState("Refeição");
-  const [splitMode, setSplitMode] = useState<"equal" | "manual">("equal");
-  const [payer, setPayer] = useState(group.members[0]?.member ?? "");
+  const isEditing = Boolean(initialExpense);
+  const [amount, setAmount] = useState(() =>
+    initialExpense ? formatInputAmount(initialExpense.amount) : "",
+  );
+  const [description, setDescription] = useState(initialExpense?.title ?? "");
+  const [notes, setNotes] = useState(initialExpense?.notes ?? "");
+  const [selectedDate, setSelectedDate] = useState(() =>
+    normalizeExpenseDate(initialExpense?.expenseDate),
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialExpense?.categoryLabel ?? "Refeição",
+  );
+  const [splitMode, setSplitMode] = useState<"equal" | "manual">(
+    initialExpense ? "manual" : "equal",
+  );
+  const [payer, setPayer] = useState(
+    initialExpense?.paidByProfileId ?? group.members[0]?.profileId ?? "",
+  );
   const [participants, setParticipants] = useState<SplitParticipant[]>(() =>
-    buildParticipants(group.members, 124.5),
+    buildParticipants(
+      group.members,
+      initialExpense?.amount ?? 0,
+      initialExpense?.splits,
+    ),
   );
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
+  const [pendingAction, setPendingAction] = useState<"save" | "delete" | null>(
+    null,
+  );
   const [isPending, startTransition] = useTransition();
-  const detailParams = new URLSearchParams(groupQuery ?? "");
   const groupHref = `/grupos/${group.slug}${groupQuery ? `?${groupQuery}` : ""}`;
 
   const numericAmount = parseCurrencyInput(amount);
@@ -153,7 +223,7 @@ export function ExpenseComposer({
 
     if (splitMode === "equal") {
       const includedIndex = includedParticipants.findIndex(
-        ({ member }) => member === participant.member,
+        ({ profileId }) => profileId === participant.profileId,
       );
 
       return distributedAmounts[includedIndex] ?? 0;
@@ -163,7 +233,7 @@ export function ExpenseComposer({
   });
   const shareByMember = new Map(
     participants.map((participant, index) => [
-      participant.member,
+      participant.profileId,
       effectiveShares[index] ?? 0,
     ]),
   );
@@ -173,7 +243,16 @@ export function ExpenseComposer({
   );
   const remainingAmount =
     Math.round((numericAmount - manualAllocated) * 100) / 100;
+  const selectedPayer = group.members.find(
+    (member) => member.profileId === payer,
+  );
   const feedbackMessage = actionErrorMessage ?? submitErrorMessage;
+  const feedbackTitle =
+    pendingAction === "delete"
+      ? "Não foi possível excluir a despesa"
+      : isEditing
+        ? "Não foi possível atualizar a despesa"
+        : "Não foi possível salvar a despesa";
 
   function handleSubmit() {
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
@@ -183,6 +262,11 @@ export function ExpenseComposer({
 
     if (!description.trim()) {
       setSubmitErrorMessage("Descreva a despesa antes de salvar.");
+      return;
+    }
+
+    if (!selectedDate) {
+      setSubmitErrorMessage("Informe uma data válida para a despesa.");
       return;
     }
 
@@ -196,82 +280,142 @@ export function ExpenseComposer({
       return;
     }
 
-    if (splitMode === "manual" && remainingAmount !== 0) {
+    if (
+      splitMode === "manual" &&
+      Math.round(Math.abs(remainingAmount) * 100) !== 0
+    ) {
       setSubmitErrorMessage(
         "A divisão manual precisa fechar exatamente com o valor total da despesa.",
       );
       return;
     }
 
+    const expenseId = initialExpense?.id;
+    const splits = participants
+      .filter((participant) => participant.included && participant.profileId)
+      .map((participant) => ({
+        profileId: participant.profileId,
+        amountOwed: shareByMember.get(participant.profileId) ?? 0,
+      }));
+
     setSubmitErrorMessage(null);
-    detailParams.set("expenseSaved", "1");
-    detailParams.set("expenseTitle", description.trim());
-    detailParams.set("expenseAmount", formatInputAmount(numericAmount));
-    detailParams.set("expensePaidBy", payer);
-    detailParams.set("expenseCategory", selectedCategory);
-    detailParams.set(
-      "expenseSplit",
-      participants
-        .filter((participant) => participant.included)
-        .map((participant) => {
-          const share = shareByMember.get(participant.member) ?? 0;
+    setPendingAction("save");
+    startTransition(async () => {
+      const result = isEditing
+        ? expenseId
+          ? await updateExpense({
+              expenseId,
+              groupSlug: group.slug,
+              paidByProfileId: payer,
+              title: description,
+              categoryLabel: selectedCategory,
+              amount: numericAmount,
+              expenseDate: selectedDate,
+              notes,
+              splits,
+            })
+          : {
+              ok: false as const,
+              message: "Não foi possível identificar a despesa para edição.",
+            }
+        : await createExpense({
+            groupId: group.id,
+            groupSlug: group.slug,
+            paidByProfileId: payer,
+            title: description,
+            categoryLabel: selectedCategory,
+            amount: numericAmount,
+            expenseDate: selectedDate,
+            notes,
+            splits,
+          });
 
-          return `${participant.member}:${formatInputAmount(share)}`;
-        })
-        .join("|"),
+      if (!result.ok) {
+        setSubmitErrorMessage(result.message);
+        setPendingAction(null);
+        return;
+      }
+
+      const nextQuery = new URLSearchParams(groupQuery ?? "");
+      nextQuery.set(isEditing ? "expenseUpdated" : "expenseSaved", "1");
+
+      router.push(`/grupos/${group.slug}?${nextQuery.toString()}`);
+    });
+  }
+
+  function handleDelete() {
+    if (!initialExpense?.canManage || !isEditing) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Excluir esta despesa vai recalcular os saldos do grupo. Deseja continuar?",
     );
-    const nextQuery = detailParams.toString();
 
-    startTransition(() => {
-      router.push(
-        nextQuery
-          ? `/grupos/${group.slug}?${nextQuery}`
-          : `/grupos/${group.slug}`,
-      );
+    if (!confirmed) {
+      return;
+    }
+
+    setSubmitErrorMessage(null);
+    setPendingAction("delete");
+    startTransition(async () => {
+      const result = await deleteExpense(initialExpense.id, group.slug);
+
+      if (!result.ok) {
+        setSubmitErrorMessage(result.message);
+        setPendingAction(null);
+        return;
+      }
+
+      const nextQuery = new URLSearchParams(groupQuery ?? "");
+      nextQuery.set("expenseDeleted", "1");
+
+      router.push(`/grupos/${group.slug}?${nextQuery.toString()}`);
     });
   }
 
   return (
     <div className="screen-shell">
       <TopBar
-        title="Adicionar despesa"
+        title={isEditing ? "Editar despesa" : "Adicionar despesa"}
         leading={
           <Link href={groupHref} className="icon-button" aria-label="Fechar">
             <ArrowLeft size={18} />
           </Link>
         }
         trailing={
-          <div className="top-bar__action-group">
-            <button
-              className="ghost-link"
-              type="button"
-              onClick={handleSubmit}
-              disabled={isPending}
-            >
-              {isPending ? "Salvando..." : "Salvar"}
-            </button>
-            <span className="top-bar__eyebrow">
-              <Settings2 size={16} />
-              Mock
-            </span>
-          </div>
+          <span className="top-bar__eyebrow top-bar__eyebrow--badge">
+            {isEditing ? "Editando" : "Despesa real"}
+          </span>
         }
       />
 
       <main className="page-content">
         {feedbackMessage ? (
-          <ActionFeedback
-            title="Não foi possível salvar a despesa"
-            message={feedbackMessage}
-          />
+          <ActionFeedback title={feedbackTitle} message={feedbackMessage} />
         ) : null}
 
-        <section className="hero-copy">
-          <span className="eyebrow-note">{group.name}</span>
-          <h1>Registre a despesa com pagador e divisão coerentes.</h1>
+        <section className="hero-copy hero-copy--card">
+          <span className="eyebrow-note">Composer de despesa</span>
+          <h1>
+            {isEditing
+              ? "Ajuste a despesa sem perder a coerência do saldo do grupo."
+              : "Registre a despesa com pagador e divisão coerentes."}
+          </h1>
           <p>
-            Escolha quem pagou, quem participa e como cada cota será dividida.
+            {isEditing
+              ? "Você pode corrigir valor, data, pagador e divisão. O grupo é recalculado depois da alteração."
+              : "Escolha quem pagou, quem participa e como cada cota será dividida."}
           </p>
+          <div className="page-meta-pills">
+            <span className="meta-pill">{group.name}</span>
+            <span className="meta-pill">
+              {includedParticipants.length} participante(s)
+            </span>
+            <span className="meta-pill">
+              {splitMode === "equal" ? "Divisão igual" : "Divisão manual"}
+            </span>
+          </div>
         </section>
 
         <section className="surface-card stack-column">
@@ -294,7 +438,7 @@ export function ExpenseComposer({
           </p>
         </section>
 
-        <section className="stack-column">
+        <section className="surface-card stack-column">
           <label className="input-shell">
             <span className="input-shell__icon">
               <ReceiptText size={18} />
@@ -310,42 +454,63 @@ export function ExpenseComposer({
           </label>
 
           <div className="split-grid">
-            <button
-              className="selector-card"
-              type="button"
-              onClick={() => {
-                setSelectedDate((current) =>
-                  current === "Hoje" ? "Ontem" : "Hoje",
-                );
-                setSubmitErrorMessage(null);
-              }}
-            >
-              <span className="selector-card__copy">
-                <CalendarDays size={16} />
-                {selectedDate}
-              </span>
-              <ChevronDown size={16} />
-            </button>
-            <button
-              className="selector-card"
-              type="button"
-              onClick={() => {
-                setSelectedCategory((current) =>
-                  current === "Refeição" ? "Transporte" : "Refeição",
-                );
-                setSubmitErrorMessage(null);
-              }}
-            >
-              <span className="selector-card__copy">
-                <PencilLine size={16} />
-                {selectedCategory}
-              </span>
-              <ChevronDown size={16} />
-            </button>
+            <label>
+              <span className="field-label">Data</span>
+              <div className="selector-card">
+                <span className="selector-card__copy">
+                  <CalendarDays size={16} />
+                  <input
+                    className="input-plain"
+                    type="date"
+                    value={selectedDate}
+                    onChange={(event) => {
+                      setSelectedDate(event.target.value);
+                      setSubmitErrorMessage(null);
+                    }}
+                    max={getTodayInputValue()}
+                    aria-label="Data da despesa"
+                  />
+                </span>
+              </div>
+            </label>
+
+            <div>
+              <span className="field-label">Categoria</span>
+              <button
+                className="selector-card"
+                type="button"
+                onClick={() => {
+                  setSelectedCategory((current) =>
+                    getNextExpenseCategory(current),
+                  );
+                  setSubmitErrorMessage(null);
+                }}
+              >
+                <span className="selector-card__copy">
+                  <PencilLine size={16} />
+                  {selectedCategory}
+                </span>
+                <ChevronDown size={16} />
+              </button>
+            </div>
           </div>
+
+          <label>
+            <span className="field-label">Observações</span>
+            <textarea
+              className="input-plain"
+              value={notes}
+              placeholder="Opcional: detalhe curto para lembrar o contexto da despesa."
+              rows={3}
+              onChange={(event) => {
+                setNotes(event.target.value);
+                setSubmitErrorMessage(null);
+              }}
+            />
+          </label>
         </section>
 
-        <section className="stack-column">
+        <section className="surface-section section-stack">
           <div className="section-heading">
             <div>
               <h2>Quem pagou</h2>
@@ -357,15 +522,15 @@ export function ExpenseComposer({
 
           <div className="stack-column">
             {group.members.map((member) => {
-              const isSelected = payer === member.member;
+              const isSelected = payer === member.profileId;
 
               return (
                 <button
-                  key={member.member}
+                  key={member.profileId ?? member.member}
                   className={`member-choice${isSelected ? " is-active" : ""}`}
                   type="button"
                   onClick={() => {
-                    setPayer(member.member);
+                    setPayer(member.profileId ?? "");
                     setSubmitErrorMessage(null);
                   }}
                 >
@@ -388,7 +553,7 @@ export function ExpenseComposer({
           </div>
         </section>
 
-        <section className="stack-column">
+        <section className="surface-section section-stack">
           <div className="section-heading">
             <div>
               <h2>Divisão da despesa</h2>
@@ -448,7 +613,7 @@ export function ExpenseComposer({
 
               return (
                 <article
-                  key={participant.member}
+                  key={participant.profileId || participant.member}
                   className={`member-split-row${participant.included ? "" : " is-disabled"}`}
                 >
                   <button
@@ -457,7 +622,7 @@ export function ExpenseComposer({
                     onClick={() => {
                       setParticipants((current) =>
                         current.map((item) =>
-                          item.member === participant.member
+                          item.profileId === participant.profileId
                             ? {
                                 ...item,
                                 included: !item.included,
@@ -507,7 +672,7 @@ export function ExpenseComposer({
 
                           setParticipants((current) =>
                             current.map((item) =>
-                              item.member === participant.member
+                              item.profileId === participant.profileId
                                 ? {
                                     ...item,
                                     shareInput: nextValue,
@@ -577,7 +742,7 @@ export function ExpenseComposer({
                   }
                 >
                   {splitMode === "equal"
-                    ? payer || "Sem pagador"
+                    ? (selectedPayer?.member ?? "Sem pagador")
                     : formatCurrency(Math.abs(remainingAmount))}
                 </strong>
               </div>
@@ -585,15 +750,33 @@ export function ExpenseComposer({
           </article>
         </section>
 
+        {isEditing && initialExpense?.canManage ? (
+          <button
+            className="ghost-link"
+            type="button"
+            onClick={handleDelete}
+            disabled={isPending}
+          >
+            <Trash2 size={16} />
+            {pendingAction === "delete" && isPending
+              ? "Excluindo despesa..."
+              : "Excluir despesa"}
+          </button>
+        ) : null}
+
         <button
           className="primary-button primary-button--full"
           type="button"
           onClick={handleSubmit}
           disabled={isPending}
         >
-          {isPending
-            ? "Salvando despesa..."
-            : `Salvar despesa - ${formatCurrency(numericAmount)}`}
+          {pendingAction === "save" && isPending
+            ? isEditing
+              ? "Atualizando despesa..."
+              : "Salvando despesa..."
+            : isEditing
+              ? `Salvar alteração - ${formatCurrency(numericAmount)}`
+              : `Salvar despesa - ${formatCurrency(numericAmount)}`}
         </button>
       </main>
 

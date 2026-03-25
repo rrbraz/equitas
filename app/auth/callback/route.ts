@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { getSafeNextPath } from "@/features/auth/lib/get-safe-next-path";
 import { getPublicSupabaseEnv, hasPublicSupabaseEnv } from "@/lib/supabase/env";
+import { ensureProfileForUser } from "@/lib/supabase/profile";
 
 export async function GET(request: NextRequest) {
   const nextPath = getSafeNextPath(
@@ -42,6 +43,14 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await ensureProfileForUser(supabase, user);
+      }
+
       response.headers.set("Cache-Control", "private, no-store");
       return response;
     }

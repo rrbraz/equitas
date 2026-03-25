@@ -99,7 +99,13 @@ export function LoginScreen({
           />
         ) : null}
 
-        <div className="form-stack">
+        <form
+          className="form-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit();
+          }}
+        >
           <label>
             <span className="field-label">Email</span>
             <input
@@ -126,17 +132,16 @@ export function LoginScreen({
               }}
             />
           </label>
-        </div>
 
-        <button
-          type="button"
-          className="primary-button primary-button--full"
-          onClick={handleSubmit}
-          disabled={isPending}
-        >
-          {isPending ? "Entrando..." : "Entrar"}
-          <ArrowRight size={18} />
-        </button>
+          <button
+            type="submit"
+            className="primary-button primary-button--full"
+            disabled={isPending}
+          >
+            {isPending ? "Entrando..." : "Entrar"}
+            <ArrowRight size={18} />
+          </button>
+        </form>
 
         <Link href="/recuperar-acesso" className="ghost-link auth-link-row">
           <KeyRound size={16} />

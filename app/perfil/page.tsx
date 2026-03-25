@@ -1,5 +1,7 @@
 import { ProfileScreen } from "@/features/profile/components/profile-screen";
-import { getMockProfileScreenData } from "@/features/profile/data/mock-profile";
+import { getProfileScreenData } from "@/features/profile/data/get-profile-screen-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function PerfilPage({
   searchParams,
@@ -18,9 +20,9 @@ export default async function PerfilPage({
       : params.passwordUpdated === "1"
         ? "Senha atualizada com sucesso."
         : params.feature === "notifications"
-          ? "Notificações ainda não estão ativas. O fluxo real entra depois do auth."
+          ? "Notificações ainda não têm integração própria nesta etapa."
           : params.feature === "payments"
-            ? "Pagamentos ainda são informativos neste modo mock. A configuração real entra nas próximas histórias."
+            ? "Configurações de pagamento ainda não têm integração dedicada nesta etapa."
             : params.scenario === "new"
               ? "Conta nova pronta. Quando você criar grupos e despesas, os totais do perfil começam a ganhar contexto."
               : undefined;
@@ -32,12 +34,11 @@ export default async function PerfilPage({
     params.scenario === "new"
       ? "info"
       : undefined;
+  const profileScreenData = await getProfileScreenData();
 
   return (
     <ProfileScreen
-      {...getMockProfileScreenData(
-        params.scenario === "new" ? "new" : "default",
-      )}
+      {...profileScreenData}
       flashMessage={flashMessage}
       flashTone={flashMessage ? (flashTone ?? "success") : undefined}
     />

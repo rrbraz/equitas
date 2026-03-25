@@ -15,7 +15,22 @@ O foco do projeto é evoluir o protótipo visual para um app real sem perder sim
 - H5 concluída: schema ajustado para auth real, convites, auditoria mínima e settlement sem duplicidade.
 - H6 concluída: políticas RLS implantadas para perfis, grupos, membros, despesas, convites e settlements.
 - H7 concluída: cadastro, login, logout, callback e proteção de rotas com sessão real.
-- História ativa: H8 (perfil base do usuário).
+- H8 concluída: perfil base do usuário com sync automático do `profile`.
+- H9 concluída: criação real de grupos com slug estável e redirecionamento.
+- H10 concluída: dashboard e listagem de grupos com dados reais por membership.
+- H11 concluída: convites, aceite por link e remoção básica de membros.
+- H12 concluída: despesa real com `expense` + `expense_splits`.
+- H13 concluída: divisão manual simples com validação de soma.
+- H14 concluída: edição e exclusão de despesa com recálculo seguro de saldo.
+- H15 concluída: saldo centralizado em `group_balance_snapshot` consumido por grupo, listagem e dashboard.
+- H16 concluída: settlements reais com persistência, validação e histórico no grupo.
+- H17 concluída: dashboard operacional com grupos prioritários e atividade recente real.
+- H18 concluída: histórico global com filtros simples por período e grupo em `/relatorios`.
+- H19 concluída: relatórios ligados ao backend com agregados, evolução temporal e pendências.
+- H20 concluída: testes de domínio no fluxo crítico de split, validação e saldo com settlement.
+- H21 concluída: logs mínimos padronizados para ações críticas e guia de observabilidade.
+- H22 concluída: checklist curto de produção e rollback documentados.
+- História ativa: backlog inicial concluído.
 
 Consulte:
 
@@ -24,6 +39,9 @@ Consulte:
 - `docs/checklist-pr.md`
 - `docs/schema-dominio.md`
 - `docs/rls-testes-manuais.md`
+- `docs/testes-fluxos-criticos.md`
+- `docs/observabilidade.md`
+- `docs/checklist-producao.md`
 - `README.md`
 - `.env.example`
 - `.github/workflows/ci.yml`
@@ -117,9 +135,9 @@ Prática esperada neste repositório:
 
 Prioridades de curto prazo:
 
-1. H8: criar o perfil base do usuário
-2. H9: criar grupos reais
-3. H10: listar grupos reais do usuário
+1. H14: editar e excluir despesas com segurança
+2. H15: calcular saldo confiável por grupo
+3. H16: registrar settlements
 
 Ao conectar backend real:
 

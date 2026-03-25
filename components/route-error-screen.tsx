@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
+import { Button } from "@/components/button";
+
 type RouteErrorScreenProps = {
   title: string;
   description: string;
@@ -21,7 +23,7 @@ export function RouteErrorScreen({
   return (
     <div className="screen-shell">
       <main className="page-content page-content--centered">
-        <section className="state-card">
+        <section className="state-card" role="alert">
           <div className="state-card__icon">
             <AlertTriangle size={24} />
           </div>
@@ -31,14 +33,10 @@ export function RouteErrorScreen({
             <p>{description}</p>
           </div>
           <div className="state-card__actions">
-            <button
-              className="primary-button primary-button--full"
-              type="button"
-              onClick={reset}
-            >
+            <Button type="button" fullWidth onClick={reset}>
               <RefreshCw size={18} />
               Tentar novamente
-            </button>
+            </Button>
             <Link href={backHref} className="ghost-link">
               {backLabel}
             </Link>

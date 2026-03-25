@@ -3,9 +3,13 @@ import { ArrowLeft } from "lucide-react";
 
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
+import { PageIntro } from "@/components/page-intro";
+import { SectionBlock } from "@/components/section-block";
 import { TopBar } from "@/components/top-bar";
 import { LogoutButton } from "@/features/auth/components/logout-button";
-import { getMockProfileScreenData } from "@/features/profile/data/mock-profile";
+import { getCurrentViewer } from "@/features/profile/data/get-current-viewer";
+
+export const dynamic = "force-dynamic";
 
 const menuItems = [
   {
@@ -44,7 +48,12 @@ export default async function MenuPage({
 }) {
   const params = await searchParams;
   const backHref =
-    params.from && params.from.startsWith("/") ? params.from : "/dashboard";
+    params.from &&
+    params.from.startsWith("/") &&
+    !params.from.startsWith("//") &&
+    !params.from.includes("\\")
+      ? params.from
+      : "/dashboard";
   const withPreservedQuery = (href: string) => {
     const nextParams = new URLSearchParams();
 
@@ -66,7 +75,7 @@ export default async function MenuPage({
 
     return nextParams.toString() ? `${href}?${nextParams.toString()}` : href;
   };
-  const { viewer } = getMockProfileScreenData();
+  const viewer = await getCurrentViewer();
 
   return (
     <div className="screen-shell">
@@ -83,34 +92,39 @@ export default async function MenuPage({
             initials={viewer.initials}
             tone="amber"
             size="sm"
+            src={viewer.avatarUrl ?? undefined}
           />
         }
       />
 
       <main className="page-content">
-        <section className="hero-copy">
-          <span className="eyebrow-note">Navegação principal</span>
-          <h1>Ir para</h1>
-          <p>
-            Atalhos claros para as áreas centrais do app enquanto o shell final
-            ainda evolui.
-          </p>
-        </section>
+        <PageIntro
+          eyebrow="Navegação principal"
+          title="Ir para"
+          description="Atalhos claros para as áreas centrais do app sem depender de um menu inflado."
+          tone="card"
+        />
 
-        <section className="settings-list">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={withPreservedQuery(item.href)}
-              className="setting-row"
-            >
-              <div>
-                <strong>{item.label}</strong>
-                <p>{item.description}</p>
-              </div>
-            </Link>
-          ))}
-        </section>
+        <SectionBlock
+          title="Áreas do app"
+          description="Cada destino abaixo leva direto para o fluxo principal daquela área."
+          className="settings-shell"
+        >
+          <section className="settings-list">
+            {menuItems.map((item) => (
+              <Link
+                key={item.href}
+                href={withPreservedQuery(item.href)}
+                className="setting-row"
+              >
+                <div>
+                  <strong>{item.label}</strong>
+                  <p>{item.description}</p>
+                </div>
+              </Link>
+            ))}
+          </section>
+        </SectionBlock>
 
         <LogoutButton label="Sair do app" />
       </main>

@@ -1,5 +1,7 @@
 import { EditProfileScreen } from "@/features/profile/components/edit-profile-screen";
-import { getMockProfileScreenData } from "@/features/profile/data/mock-profile";
+import { getCurrentViewer } from "@/features/profile/data/get-current-viewer";
+
+export const dynamic = "force-dynamic";
 
 export default async function EditarPerfilPage({
   searchParams,
@@ -7,8 +9,8 @@ export default async function EditarPerfilPage({
   searchParams: Promise<{ scenario?: string }>;
 }) {
   const params = await searchParams;
-  const scenario = params.scenario === "new" ? "new" : "default";
-  const { viewer } = getMockProfileScreenData(scenario);
+  const viewer = await getCurrentViewer();
+  const scenario = params.scenario === "new" ? "new" : undefined;
 
   return <EditProfileScreen viewer={viewer} scenario={scenario} />;
 }
